@@ -8,6 +8,7 @@ profileRouter.use(auth);
 
 profileRouter.get("/profile", (req, res) => {
   res.send("Profile page");
+  // send resquest to profile service
 });
 
 profileRouter.get("/logout", async (req, res) => {
@@ -28,4 +29,6 @@ profileRouter.get("/editProfile", (req, res) => {
 });
 
 // TODO: set up API call to profile service to edit profile
-// ? the database is shared, external API call maynot be necesarry, edit it right here ?
+// ? the database is shared, external API call may not be necesarry, edit it right here ?
+
+module.exports = { profileRouter: profileRouter };

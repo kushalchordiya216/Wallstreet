@@ -1,6 +1,8 @@
 // dependencies
 const express = require("express");
-const { loginROuter: loginRouter } = require("./Router/login");
+const { loginRouter } = require("./Router/login");
+const { profileRouter } = require("./Router/profile");
+
 const cookieParser = require("cookie-parser");
 const auth = require("../middleware/auth");
 
@@ -12,6 +14,7 @@ const PORT = process.env.PORT || 3000;
 server.use(express.json());
 server.use(cookieParser());
 server.use(loginRouter);
+server.use(profileRouter);
 
 server.listen(PORT, () => {
   console.log(`Gateway API up & running at port ${PORT}....`);

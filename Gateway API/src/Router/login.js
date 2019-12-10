@@ -40,6 +40,7 @@ loginRouter.post("/register", async (req, res) => {
   } catch (error) {
     res.send("Something went wrong please try again!\n");
   }
+  //TODO: create new profile for every registered user with default net worth
 });
 
 module.exports = { loginRouter: loginRouter };

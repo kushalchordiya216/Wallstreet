@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -38,18 +39,6 @@ const userSchema = new mongoose.Schema({
         throw new Error("Email given is invalid");
       }
     }
-  },
-  availableCash: {
-    type: Number,
-    default: 4000000
-  },
-  lockedCash: {
-    type: Number,
-    default: 0
-  },
-  totalCash: {
-    type: Number,
-    default: 4000000
   },
   tokens: [
     {
