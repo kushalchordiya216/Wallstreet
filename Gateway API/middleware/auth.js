@@ -4,7 +4,7 @@ const { User } = require("../database/models");
 const auth = async (req, res, next) => {
   try {
     const token = req.cookies.Authorization;
-    const decodedToken = await jwt.verify(token, "secretkey");
+    const decodedToken = jwt.verify(token, "secretkey");
     const user = await User.findOne({
       // eslint-disable-next-line quotes
       _id: decodedToken._id,
@@ -14,8 +14,8 @@ const auth = async (req, res, next) => {
       throw new Error("Request needs to be Authenticated!\n");
     }
     req.user = user;
-    req.user._id = decodedToken._id;
-    req.user.token = token;
+    req._id = decodedToken._id;
+    req.token = token;
     next();
   } catch (e) {
     res.clearCookie("Authorization");

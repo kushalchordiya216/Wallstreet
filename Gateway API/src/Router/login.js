@@ -1,5 +1,6 @@
 const express = require("express");
-
+const request = require("request");
+const auth = require("../../middleware/auth");
 const { User, userSchema } = require("../../database/models");
 require("../../database/connector");
 
@@ -35,12 +36,25 @@ loginRouter.post("/register", async (req, res) => {
     const user = new User(req.body);
     await user.save();
     const token = await user.generateAuthToken();
-    res.cookie("Authorization", token);
-    res.redirect("profile");
+
+    const options = {
+      url: "http://localhost:3001/profile",
+      headers: { "content-type": "application/json" },
+      json: true,
+      method: "POST",
+      body: { user: req._id, email: req.body.email }
+    };
+    // REST API call to profile service
+    request(options, function(err, response, body) {
+      if (!err) {
+        res.cookie("Authorization", token);
+        res.send(body);
+      }
+    });
   } catch (error) {
-    res.send("Something went wrong please try again!\n");
+    console.log(error);
+    res.status(400).send(error);
   }
-  //TODO: create new profile for every registered user with default net worth
 });
 
 module.exports = { loginRouter: loginRouter };

@@ -4,7 +4,6 @@ const { loginRouter } = require("./Router/login");
 const { profileRouter } = require("./Router/profile");
 
 const cookieParser = require("cookie-parser");
-const auth = require("../middleware/auth");
 
 // constants
 const server = express();

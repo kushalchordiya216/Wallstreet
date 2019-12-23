@@ -10,8 +10,8 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
  * Total worth is a cumulative addition of assets held as stock and cash, more weight is pressed on stocks
  */
 const profileSchema = new mongoose.Schema({
-  user: { type: ObjectId },
-  email: { type: String },
+  user: { type: ObjectId, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
   bio: { type: String },
   avatar: { type: String },
   availableCash: {
@@ -29,15 +29,11 @@ const profileSchema = new mongoose.Schema({
   TotalWorth: {
     type: Number,
     default: 4000000
-  }
-});
-
-const portfolioSchema = new mongoose.Schema({
-  user: { type: ObjectId },
-  assets: [
+  },
+  stocks: [
     {
       company: {
-        type: ObjectId
+        type: String
       },
       volume: {
         type: Number
@@ -57,8 +53,9 @@ profileSchema.methods.lockCash = function(cash) {
   this.availableCash -= cash;
   this.lockedCash += cash;
 };
+//TODO: profileSchema.statics.calcStockWorth;
 
-//TODO: portfolioSchema.statics.calcStockWorth;
+const Profile = mongoose.model("profile", profileSchema);
 
 /**
  * schema for different bids the users can make
@@ -81,3 +78,6 @@ const bidSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+//TODO: functionality to add cancelled bids to db
+module.exports = { Profile: Profile };
