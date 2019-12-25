@@ -53,31 +53,11 @@ profileSchema.methods.lockCash = function(cash) {
   this.availableCash -= cash;
   this.lockedCash += cash;
 };
+
 //TODO: profileSchema.statics.calcStockWorth;
 
 const Profile = mongoose.model("profile", profileSchema);
 
-/**
- * schema for different bids the users can make
- * most of the attributes are self explanatory
- * action can have two values (buy / sell)
- * category can have the following values
- * - market price
- * - limit price
- * - options
- * To know how each category of bid is processed, visit Market/src/transactions.js
- */
-const bidSchema = new mongoose.Schema(
-  {
-    user: { type: ObjectId },
-    company: { type: String },
-    volume: { type: Number },
-    price: { type: Number },
-    category: { type: String },
-    action: { type: String }
-  },
-  { timestamps: true }
-);
-
-//TODO: functionality to add cancelled bids to db
-module.exports = { Profile: Profile };
+module.exports = {
+  Profile: Profile
+};

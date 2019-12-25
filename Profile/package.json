@@ -1,16 +1,18 @@
 {
-  "name": "account",
+  "name": "Profile",
   "version": "1.0.0",
-  "description": "service that manages user account activity",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "kushalchordiya216",
-  "license": "MIT",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "mongoose": "^5.7.14",
+    "kafka-node": "^5.0.0",
+    "mongoose": "^5.8.3",
     "request": "^2.88.0"
   }
 }

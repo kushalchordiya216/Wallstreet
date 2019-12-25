@@ -1,5 +1,8 @@
 const express = require("express");
+const kafka = require("kafka-node");
 
+require("../database/connector");
+const { Bid, Cancel } = require("../database/models");
 const tradeServer = express();
 const PORT = process.env.PORT || 3002;
 
