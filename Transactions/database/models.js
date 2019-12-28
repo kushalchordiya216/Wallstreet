@@ -29,7 +29,8 @@ const transactionSchema = new mongoose.Schema(
     seller: { type: ObjectId },
     company: { type: ObjectId },
     volume: { type: Number },
-    price: { type: Number }
+    price: { type: Number },
+    spread: { type: Number }
   },
   { timestamps: true }
 );
@@ -37,7 +38,7 @@ const transactionSchema = new mongoose.Schema(
 const Transactions = mongoose.model("transactions", transactionSchema);
 
 module.exports = {
-  BuyTable: BuyTable,
-  SellTable: SellTable,
+  Buy: Buy,
+  Sell: Sell,
   Transactions: Transactions
 };

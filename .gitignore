@@ -94,3 +94,4 @@ Deprecated/*
 runall.sh
 .vscode/launch.json
 .vscode/tasks.json
+*/playground/*
