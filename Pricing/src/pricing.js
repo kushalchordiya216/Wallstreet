@@ -7,7 +7,8 @@ const { Company } = require("../database/models");
 const pricingServer = express();
 const PORT = process.env.PORT || 3006;
 
-pricingServer.get("/prpfile/:company", (req, res) => {
+
+pricingServer.get("/profile/:company", (req, res) => {
   // send the profile of the requested company, mainly the price
 });
 

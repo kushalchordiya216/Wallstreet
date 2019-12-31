@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "kafka-node": "^5.0.0",
-    "mongoose": "^5.8.3"
+    "mongoose": "^5.8.3",
+    "request": "^2.88.0"
   }
 }
