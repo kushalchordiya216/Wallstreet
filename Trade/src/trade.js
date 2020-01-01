@@ -124,6 +124,10 @@ tradeServer.post("/trade/:company", (req, res) => {
 
     const stockPrice = body.stockPrice
 
+    //Maximum limit price 
+    //
+    //
+
     if((stockPrice-bidPrice) > 40)
     {
       res.send("Bid not Allowed").status(200)
@@ -264,8 +268,16 @@ try
   })
 
 }
+
+
+//Here the bid is removed from user data as it failed to be published
+//
+//
+
+
 catch(e)
 {
+  
   res.send("Bid placing was interrupted").status(200);
 
 }
@@ -282,6 +294,62 @@ tradeServer.post("/trade/cancel/", (req, res) => {
   // cancel pending bid
   // the bid id,which is sent in the url params, will be used to find and cancel the bid
   // cancellation will also be published to a queue
+
+  const bidId = req.params.bidId;
+  const _id = req._id;
+
+
+  Bid.findOneAndDelete({_id:bidId},function(err,data) {
+
+    if(err)
+    {
+      res.send("Error while cancelling trade").status(404);
+    }
+
+  
+try
+{
+
+  payloads = [
+  {
+    topic:'cancelledBid',
+    messages:data,
+    partition:0
+  }
+  ];
+
+  bidProducer.on('ready', function(){
+
+    bidProducer.send(payloads,function(err,data){
+      if(err)
+      {
+        throw new Error('unsuccesful publish');
+      }
+
+      else
+      {
+        console.log("Bid published")
+      }
+      
+    })
+
+  })
+
+}
+
+catch(e)
+{
+  
+  res.send("Bid placing was interrupted").status(200);
+
+}
+
+})
+
+
+res.send("Bid sucessfully cancelled").status(200);
+
+
 });
 
 // TODO: allow users to cancel bids themselves
