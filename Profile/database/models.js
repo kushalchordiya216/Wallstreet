@@ -58,6 +58,4 @@ profileSchema.methods.lockCash = function(cash) {
 
 const Profile = mongoose.model("profile", profileSchema);
 
-module.exports = {
-  Profile: Profile
-};
+module.exports = Profile;
