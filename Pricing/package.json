@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
     "kafka-node": "^5.0.0",
     "mongoose": "^5.8.3"
   }
