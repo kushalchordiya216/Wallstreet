@@ -39,13 +39,13 @@ function publishPrices(newPrices) {
 }
 
 /**
- * Update new prices of each company in compnay collection in database
+ * Update new prices of each company in company collection in database
  * @param {Object} newPrices
  */
 async function updatePrices(newPrices) {
   const company = new Company();
-  for (company in newPrices) {
-    await company.updateOne({ name: company }, { price: newPrices.company });
+  for (comp in newPrices) {
+    await company.updateOne({ name: comp }, { price: newPrices.company });
   }
 }
 

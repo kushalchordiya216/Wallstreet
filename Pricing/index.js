@@ -84,7 +84,7 @@ transactionsConsumer.on("message", function(message) {
  */
 async function main() {
   setInterval(() => {
-    // pause both consumers momentarily to not have asynchronous ops on the datastructures defined below
+    // pause both consumers momentarily to not have asynchronous ops on the datastructures defined above
     bidsConsumer.pause();
     transactionsConsumer.pause();
 

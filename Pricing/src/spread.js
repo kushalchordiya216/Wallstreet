@@ -11,10 +11,11 @@
 function accumulateSpread(arr) {
   let spread = {};
   arr.forEach(transaction => {
-    if (!(transaction.company in spread)) {
-      spread.company = 0;
+    const company = transaction.company;
+    if (!(company in spread)) {
+      spread[company] = 0;
     }
-    spread.company += transaction.spread;
+    spread[company] += transaction.spread;
   });
   return spread;
 }
