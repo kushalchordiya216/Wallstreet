@@ -12,7 +12,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
  */
 const bidSchema = new mongoose.Schema(
   {
-    user: { type: ObjectId },
+    user: { type: String },
     company: { type: String },
     volume: { type: Number },
     price: { type: Number },
@@ -29,5 +29,5 @@ const cancellationScehma = new mongoose.Schema(
   },
   { timestamps: true }
 );
-const Cancel = mongoose.model("cancelllation", cancellationScehma);
+const Cancel = mongoose.model("cancellation", cancellationScehma);
 module.exports = { Bid: Bid, Cancel: Cancel };

@@ -1,12 +1,15 @@
 const express = require("express");
 const kafka = require("kafka-node");
-const request = require("request");
+const request = require("request-promise");
 const bidProducer = require("./kafka")
 const publish = require("./publish")
+const bodyparser = require("body-parser")
+
 
 require("../database/connector");
 const { Bid, Cancel } = require("../database/models");
 const tradeServer = express();
+tradeServer.use(express.json());
 const PORT = process.env.PORT || 3002;
 
 tradeServer.get("/trade", async(req, res) => {
@@ -14,27 +17,30 @@ tradeServer.get("/trade", async(req, res) => {
 
   const options = {
 
-      url:"http://localhost:3000/index",
-      method:"GET",
-      _id:"req._id"
-
+      uri:"http://localhost:3000/index",
+      //method:"GET",
+      body:{
+        _id:JSON.stringify(req.body._id)
+        
+      },
+      json:true
   };
 
-  request(options, function(err,response,body) {
+  try
+  {
 
-    if(err)
-    {
-      res.send("Something went wrong").status(404);
-    }
+    const data = await request(options)
+    res.send(data).status(200);
 
-    res.send(body).status(200);
-
-  })
-  
+  }
+  catch(e)
+  {
+    res.send("Something went wrong").status(404);
+  }
 
 });
 
-tradeServer.get("/trade/:company", async(req, res) => {
+tradeServer.get("/trade/company", async (req, res) => {
   // trade terminal for a particular company, will fetch and store company financials (current price)
 
   //Once fetched this data cant be modified so when user requests to bid we will fetch updated price and
@@ -42,64 +48,78 @@ tradeServer.get("/trade/:company", async(req, res) => {
 
   // ? how/where do i store it
 
-  const companyName = req.body.companyName;
-
+  const companyName = req.body.company;
+  const _id = req.body._id;
   const options = {
-    url:"http://localhost:3000/profile/"+ companyName ,
-    method:"GET",
-    _id:"req._id"
+    uri:"http://localhost:3000/profile/"+ companyName ,
+    //method:"GET",
+    body:{
+      _id:JSON.stringify({_id})
+    }
+    
   }
 
-  request(options, function(err,response,body){
+  try
+  {
 
-    if(err)
-    {
-      res.send("Something went wrong").status(404);
-    }
+    const data = await request(options)
+    if(data)
+    res.send(data).status(200);
 
-    res.send(body).status(200);
+    else
+    res.send("Company Not Present");
 
-  })
+  }
+  catch(e)
+  {
+    res.send("Something went wrong").status(404);
+  }
 
 });
 
-tradeServer.post("/trade/:company", async(req, res) => {
+tradeServer.post("/trade/placeBid", async(req, res) => {
   // TODO: Allow user to make bids, includes authenticating the bid by checking user financials and existing stock
   // TODO: publish all to kafka stream
   // To know about the different kinds of bids that can be made, see User/database/models.js/bidSchema
-
-  const _id = req._id;
+  
+  
+  
+ 
+  const _id = req.body._id;
   const bidPrice = req.body.bidPrice;
   const volume = req.body.volume;
   const action = req.body.action;
   const type = req.body.type;
 
   //Company name can also be put as query string if required
-  //const companyName = req.query.companyName
-
-  const companyName = req.body.companyName;
-
+  const companyName = req.body.companyName
+ 
+  
+  
+ 
 
   const options = {
-    url:"http://localhost:3000/profile/",
-    method:"GET",
-    body:JSON.stringify({_id})
+    uri:"http://localhost:3001/profile/",
+   // method:"GET",
+    body:{
+      _id:JSON.stringify(_id)
+    },
+    json:true
   }
+  //
 
-  request(options, function(err,response,body){
-
-    if(err)
-    {
-      res.send("Something went wrong").status(404);
-    }
-
-    const profile = body;
+  try
+  {
+    
+    const profile = await request(options)
+    console.log(profile)
     const availableCash = profile.availableCash;
     const userStocks = profile.stocks; 
 
-  })
+    console.log(availableCash);
+    
 
-  if(action === "buy")
+    if(action === "buy")
   {
 
     //Checks if total cost + brokerage fees is available or not
@@ -110,23 +130,29 @@ tradeServer.post("/trade/:company", async(req, res) => {
       res.send("Enough cash is not available").status(200);
     }
     
+    
 
-
-  const options = {
-    url:"http://localhost:3000/profile/"+ companyName ,
-    method:"GET",
-    _id:"req._id"
-  }
-
-  request(options, function(err,response,body){
-
-    if(err)
-    {
-      res.send("Something went wrong").status(404);
+    const options1 = {
+      uri:"http://localhost:3006/profile",
+     // method:"GET",
+      body:{
+        _id:JSON.stringify({_id}),
+        companyName:companyName
+      },
+      json:true
     }
 
-    const stockPrice = body.stockPrice
+    const company1 = await request(options1)
 
+    if(company1)
+    {
+    const stockPrice = company1.stockPrice;
+    }
+    else
+    {
+      res.send("Company Not Present").status(200);
+    }
+    
     //Maximum limit price 
     //
     //
@@ -136,83 +162,68 @@ tradeServer.post("/trade/:company", async(req, res) => {
       res.send("Bid not Allowed").status(200)
     }
 
-    //Limit bid
-    if(type === "limit")
-    {
 
-      const finalBid = new Bid({
-      user:_id,
-      company:companyName,
-      volume:volume,
-      price:bidPrice,
-      category:"limit",
-      action:"buy"});
-
-      /*Once Bid is suceesfully placed 5% of available cash is removed from user profile as brokerage
-
-      **IF available cash is deducted then user has to have lockedcash amount to sustain the trade
-
-      */
-
+     //Limit bid
+    else if(type === "limit")
+     {
+ 
+       const finalBid = new Bid({
+       user:_id,
+       company:companyName,
+       volume:volume,
+       price:bidPrice,
+       category:"limit",
+       action:"buy"});
+ 
+       /*Once Bid is suceesfully placed 5% of available cash is removed from user profile as brokerage
+ 
+       **IF available cash is deducted then user has to have lockedcash amount to sustain the trade
+ 
+       */
+ 
+        await finalBid.save();
+        // res.send("Buy bid(LimitPrice) placed").status(200);
+ 
+        profile.lockedCash = bidPrice*volume;
+        profile.availableCash = availableCash - profile.lockedCash;
+        profile.availableCash = profile.availableCash -(((bidPrice*volume)/100)*5);
         
-      try
-      {
-       await finalBid.save();
-       // res.send("Buy bid(LimitPrice) placed").status(200);
+       publish('bid',finalBid);
+       publish('profile',profile);
+       res.send("Bid Placed(Sell Bid)").status(200);
+   
+     }
 
+     else if(type === "marketprice")
+     {
+       const finalBid = new Bid({
+       user:_id,
+       company:companyName,
+       volume:volume,
+       price:bidPrice,
+       category:"marketprice",
+       action:"buy"});
+   
+       
+      
+       await finalBid.save();
+        // res.send("Buy bid(MarketPrice) placed").status(200);
+ 
+       
        profile.lockedCash = bidPrice*volume;
        profile.availableCash = availableCash - profile.lockedCash;
        profile.availableCash = profile.availableCash -(((bidPrice*volume)/100)*5);
 
-      await publish('bid',finalBid);
-      await publish('profile',profile);
+       
+       publish('bid',finalBid);
+       publish('profile',profile);
+       res.send("Bid Placed(Sell Bid)").status(200);
+                       
+     }
 
+  }
 
-      }
-      catch(e)
-      {
-
-        res.send("Placing bid failed").status(404);
-      }
-    }
-
-
-    //MArketPrice bid
-    else if(type === "marketprice")
-    {
-     
-      const finalBid = new Bid({
-      user:_id,
-      company:companyName,
-      volume:volume,
-      price:bidPrice,
-      category:"marketprice",
-      action:"buy"});
-  
-      try
-      {
-      await finalBid.save();
-       // res.send("Buy bid(MarketPrice) placed").status(200);
-
-      
-      profile.lockedCash = bidPrice*volume;
-      profile.availableCash = availableCash - profile.lockedCash;
-      profile.availableCash = profile.availableCash -(((bidPrice*volume)/100)*5);
-
-      await publish('bid',finalBid);
-      await publish('profile',profile);
-
-      }
-
-      catch(e)
-      {
-        res.send("Placing bid failed").status(404);
-      }                        
-    }
-  })
-}
-
-else
+  else
 {
 
   //May return List of 1 object or just the object not sure
@@ -223,10 +234,16 @@ else
 
   })
 
+  if(companyStock)
+  {
+
   if(companyStock.volume < volume)
   {
     res.send("Bid is invalid insufficient stocks found").status(200);
   }
+
+  else
+  {
 
   const finalBid = new Bid({
   user:_id,
@@ -235,68 +252,68 @@ else
   price:bidPrice,
   category:"#",//Not sure about the cateogries in sell bid
   action:"sell"});
-
-    try
-    {
-
+  
     await finalBid.save();
      // res.send("Bid Placed(Sell Bid)").status(200);
-    await publish('bid',finalBid);
-
-    }
-
-    catch(e)
-
-    {
-      res.send("Placing bid failed");
-    }
+    publish('bid',finalBid);
+    res.send("Bid Placed(Sell Bid)").status(200);
+  }
 }
 
-//Publishing the BIDS
-/*
-If publishing fails bid should be entirely cancelled as
-it wont get executed
-not yet implemented
-*/
+else
+{
+  res.send("No Stock of specified company Present").status(200);
+}
 
-//Here the bid is removed from user data as it failed to be published
-//
-//
-res.send("Bid Placed(Sell Bid)").status(200);
+}
 
+
+
+  }
+  catch(e)
+  {
+    //res.send("Bid placing failed").status(404)
+    console.log(e);
+  }
+
+ // res.send("Bid Placed(Sell Bid)").status(200);
+  //
 });
 
-tradeServer.post("/trade/cancel/", async(req, res) => {
+tradeServer.post("/trade/cancel", async(req, res) => {
   // cancel pending bid
   // the bid id,which is sent in the url params, will be used to find and cancel the bid
   // cancellation will also be published to a queue
 
-  const bidId = req.params.bidId;
-  const _id = req._id;
+  
+  const _id = req.body._id;
+  const bidId = req.body.bidId;
+  
+  var query = Bid.findOneAndDelete({_id:bidId});
 
-  try 
+  try
   {
 
-  Bid.findOneAndDelete({_id:bidId},function(err,data) {
+  const data = await query.exec();
 
-    if(err)
-    {
-      res.send("Error while cancelling trade").status(404);
-    }
+  if(data)
+  {
+  publish('cancelledBid',data);
+  res.send("Bid sucessfully cancelled").status(200);
+  }
+  else
+  {
+    res.send("Bid Not Present").status(200);
+  }
 
-    await publish('cancelledBid',data);
+  }
+  catch(e)
+  {
+    res.send("Error while cancelling").status(404);
+  }
 
-   
-
-})
 
 
-res.send("Bid sucessfully cancelled").status(200);
-}
-catch(e)
-{
-  res.send("Bid cancellation failed").status(404);
-}
 
 
 });

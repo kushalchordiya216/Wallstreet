@@ -1,7 +1,17 @@
+const kafka = require("kafka-node")
+
 
 const publish = (top,msg) => {
 
-    return new Promise((resolve,reject) => {
+   
+
+        try
+        {
+
+          
+          const client = new kafka.KafkaClient('localhost:2181');
+          const bidProducer = new kafka.Producer(client);
+          
 
         payloads = [
             {
@@ -16,20 +26,25 @@ const publish = (top,msg) => {
               bidProducer.send(payloads,function(err,data){
                 if(err)
                 {
-                  return reject('Publish Failed');
+                  return 'Publish Failed';
                 }
           
                 else
                 {
-                  return resolve('Sucessful Publish');
+                  return 'Sucessful Publish';
                 }
                 
               })
           
             })
+          }
+          catch(e)
+          {
+            console.log(e);
+          }
 
 
-    })
+    
    
 
 

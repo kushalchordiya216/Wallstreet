@@ -1,6 +1,8 @@
 require("../database/connector");
 const express = require("express");
-const { Profile } = require("../database/models");
+const Profile = require("../database/models");
+const mongoose = require('mongoose');
+
 
 const profileServer = express();
 const PORT = process.env.PORT || 3001;
@@ -18,7 +20,12 @@ profileServer.post("/editProfile", (req, res) => {
 
 profileServer.get("/profile", async (req, res) => {
   // display user profile, by fetching it from profile db
-  const profile = await Profile.findOne({ user: req.body._id });
+  //Change this later
+  //
+  //
+  const profile = await Profile.findOne();
+  console.log(profile)
+  console.log(req.body._id);
   if (profile) {
     res.send(profile);
   } else {
@@ -29,10 +36,16 @@ profileServer.get("/profile", async (req, res) => {
 profileServer.post("/profile", async (req, res) => {
   console.log("Creating new profile");
   try {
+    
+     
+   
     const profile = new Profile(req.body);
+   
     await profile.save();
+    console.log("Succesful");
     res.send(profile);
   } catch (error) {
+    console.log(error);
     res.status(400).send(error);
   }
 });

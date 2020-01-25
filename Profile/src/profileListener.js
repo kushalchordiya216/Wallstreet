@@ -5,36 +5,55 @@
 
 
 const kafka = require('kafka-node')
-const Profile = require('../database/models')
+const { Profile1 , profileSchema } = require('../database/models')
 
 
-//const updateProfile = () => {
+const mongoose = require("mongoose");
+
+mongoose
+  .connect("mongodb://localhost:27017/Wallstreet", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true
+  })
+  .then(() => {
+    console.log("Connection established with DB");
+  })
+  .catch(error => {
+    console.log(`Error in conecting to database!\n${error}`);
+  });
+
+const Profile = mongoose.model("profile",profileSchema);
 
 
-while(true)
-{
+const updateProfile = () => {
+
 
 try {
-  const Consumer = kafka.HighLevelConsumer;
-  const client = new kafka.KafkaClient({kafkaHost: '#Whatever the address'});
-  let consumer = new Consumer(
+ 
+  const client = new kafka.KafkaClient('localhost:2181');
+  let consumer = new kafka.Consumer(
     client,
     [{ topic:'profile', partition: 0 }],
     {
       autoCommit: false
     }
   );
+  console.log("ProfileListener is Online");
   consumer.on('message', async function(message) {
     
-    const profile = JSON.parse(message.value);
+   
 
-    const newProfile = new Profile(profile);
+    const newProfile = JSON.parse(message.value);
 
-    const oldProfile = await Profile.findOne({_id:newProfile._id});
+    console.log(newProfile);
+
+    const oldProfile = await Profile.findById(newProfile._id);
 
     Object.assign(oldProfile,newProfile);
 
     await oldProfile.save();
+    console.log("Profile Updated");
 
   })
   consumer.on('error', function(err) {
@@ -45,8 +64,7 @@ catch(e) {
   console.log(e);
 }
 
+
 }
 
-//}
-
-//module.exports = updateProfile
+updateProfile();

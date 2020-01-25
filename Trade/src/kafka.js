@@ -1,6 +1,6 @@
 const kafka = require('kafka-node');
 
-const client = new kafka.KafkaClient({kafkaHost: '#Whatever the address'});
+const client = new kafka.KafkaClient();
 
 const Producer = kafka.Producer;
 

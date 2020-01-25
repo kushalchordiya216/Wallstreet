@@ -10,7 +10,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
  * Total worth is a cumulative addition of assets held as stock and cash, more weight is pressed on stocks
  */
 const profileSchema = new mongoose.Schema({
-  user: { type: ObjectId, required: true, unique: true },
+  user: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   bio: { type: String },
   avatar: { type: String },
@@ -58,4 +58,4 @@ profileSchema.methods.lockCash = function(cash) {
 
 const Profile = mongoose.model("profile", profileSchema);
 
-module.exports = Profile;
+module.exports = {Profile , profileSchema };
