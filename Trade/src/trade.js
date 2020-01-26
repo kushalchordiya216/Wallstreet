@@ -218,7 +218,7 @@ tradeServer.post("/trade/placeBid", async(req, res) => {
        profile.availableCash = profile.availableCash -(((bidPrice*volume)/100)*5);
 
        
-       await publish("Bid",finalBid);
+       await publish("Bids",finalBid);
        await publish("profile",profile);
        res.send("Bid Placed(Sell Bid)").status(200);
                        

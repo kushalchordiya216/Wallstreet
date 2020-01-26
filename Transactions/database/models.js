@@ -26,8 +26,8 @@ const Sell = mongoose.model("selltable", bidSchema);
  */
 const transactionSchema = new mongoose.Schema(
   {
-    buyer: { type: String }, //Made them strings
-    seller: { type: String },
+    buyer: { type: ObjectId }, 
+    seller: { type: ObjectId },
     company: { type: String },
     volume: { type: Number },
     price: { type: Number },

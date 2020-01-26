@@ -25,13 +25,13 @@ payloads = [
       bidProducer.send(payloads,function(err,data){
         if(err)
         {
-          console.log("NOT YOO");
+          console.log(err);
           return reject("Failed Publish")
         }
   
         else
         {
-          console.log("YOO");
+          console.log(msg);
           return resolve("Publish Success");
 
         }

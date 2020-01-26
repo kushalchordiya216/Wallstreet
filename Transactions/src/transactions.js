@@ -20,14 +20,13 @@ const processTransactions = async bid => {
   let transactionStatus = "full";
   do {
     var bestSell1 = Sell.find(
-      { company: bid.company },
-      { volume: 1, price: 1 }
+      { company: bid.company }
     )
       .sort({ price: 1 })
       .limit(1);
 
     //This is saved as an query so you cant access object directly
-    var bestBuy1 = Buy.find({ company: bid.company }, { volume: 1, price: 1 })
+    var bestBuy1 = Buy.find({ company: bid.company })
       .sort({ price: -1 })
       .limit(1);
 
@@ -37,6 +36,7 @@ const processTransactions = async bid => {
     const bestSell  = bestSell2[0];
     const bestBuy   = bestBuy2[0];
     console.log(bestBuy);
+    console.log(bestSell);
 
     if (bestSell.price <= bestBuy.price) {
       transactionStatus = executeTransactions(bestSell, bestBuy);
@@ -76,6 +76,10 @@ const executeTransactions = async (sell, buy) => {
       });
     }
     // TODO: make schema methods on bidSchema for partial updates
+    console.log("TRANNNSSSSSSSSSSSSSSSSSSSSS");
+    console.log(buy);
+    console.log(sell);
+    //console.log(buy.company);
     let spread = (buy.price - sell.price) * minVolume;
     transaction = new Transactions({
       buyer: buy.user,

@@ -19,6 +19,7 @@ const {Buy,Sell,Transactions} = require("./database/models")
 bidConsumer.on("message", async function(message) {
   try {
     const bid_obj = JSON.parse(message.value);
+    console.log(bid_obj);
     if (bid_obj.action === "buy") {
       const bid = new Buy(JSON.parse(message.value));
       console.log(bid);
@@ -51,4 +52,4 @@ cancelConsumer.on("message", async function(message) {
 });
 
 // call rollback function every 5 min
-setInterval(rollback,  3000000); 
+//setInterval(rollback,  3000000); 
