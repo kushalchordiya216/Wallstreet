@@ -1,53 +1,45 @@
 const kafka = require("kafka-node")
 
+//Promise is eesential as one of The publishes fails when they both are executed together
+//DOnt knw why
 
-const publish = (top,msg) => {
+const publish =  (top,msg) => {
 
-   
 
-        try
+return new Promise( (resolve,reject) => {
+
+  const client = new kafka.KafkaClient('localhost:2181');
+  const bidProducer = new kafka.Producer(client);
+  
+
+payloads = [
+    {
+      topic:top,
+      messages:JSON.stringify(msg),
+      partition:0
+    }
+    ];
+  
+    bidProducer.on('ready', function(){
+  
+      bidProducer.send(payloads,function(err,data){
+        if(err)
         {
+          console.log("NOT YOO");
+          return reject("Failed Publish")
+        }
+  
+        else
+        {
+          console.log("YOO");
+          return resolve("Publish Success");
 
-          
-          const client = new kafka.KafkaClient('localhost:2181');
-          const bidProducer = new kafka.Producer(client);
-          
-
-        payloads = [
-            {
-              topic:top,
-              messages:JSON.stringify(msg),
-              partition:0
-            }
-            ];
-          
-            bidProducer.on('ready', function(){
-          
-              bidProducer.send(payloads,function(err,data){
-                if(err)
-                {
-                  return 'Publish Failed';
-                }
-          
-                else
-                {
-                  return 'Sucessful Publish';
-                }
-                
-              })
-          
-            })
-          }
-          catch(e)
-          {
-            console.log(e);
-          }
-
-
-    
-   
-
-
+        }
+        
+      })
+  
+    })
+})
 }
 
 module.exports = publish;

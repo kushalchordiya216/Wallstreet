@@ -6,12 +6,13 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
  */
 const bidSchema = new mongoose.Schema(
   {
-    user: { type: ObjectId },
+    user: { type: ObjectId }, //Converted to String problems whenusing object id
     company: { type: String },
     volume: { type: Number },
     price: { type: Number },
     category: { type: String },
-    _id: { type: ObjectId }
+    actions:{type:String}, //Added Action
+    _id: { type: ObjectId } //_id is automatically reated so commented this out
   },
   { timestamps: true }
 );
@@ -25,11 +26,12 @@ const Sell = mongoose.model("selltable", bidSchema);
  */
 const transactionSchema = new mongoose.Schema(
   {
-    buyer: { type: ObjectId },
-    seller: { type: ObjectId },
-    company: { type: ObjectId },
+    buyer: { type: String }, //Made them strings
+    seller: { type: String },
+    company: { type: String },
     volume: { type: Number },
-    price: { type: Number }
+    price: { type: Number },
+    spread: { type: Number }
   },
   { timestamps: true }
 );
@@ -37,7 +39,7 @@ const transactionSchema = new mongoose.Schema(
 const Transactions = mongoose.model("transactions", transactionSchema);
 
 module.exports = {
-  BuyTable: BuyTable,
-  SellTable: SellTable,
+  Buy: Buy,
+  Sell: Sell,
   Transactions: Transactions
 };

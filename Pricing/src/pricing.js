@@ -16,8 +16,8 @@ pricingServer.get("/profile", async(req, res) => {
 
   const cname = req.body.companyName;
   console.log(cname);
-  const company = await Company.findOne({user:cname});
-
+  const company = await Company.findOne({name:cname});
+  console.log(company);
   res.send(company);
 
 

@@ -6,11 +6,14 @@ const publish = require("./publish")
 const bodyparser = require("body-parser")
 
 
+
 require("../database/connector");
 const { Bid, Cancel } = require("../database/models");
 const tradeServer = express();
+
+//Essential to use express.json() else body wont be parsed
 tradeServer.use(express.json());
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3003;
 
 tradeServer.get("/trade", async(req, res) => {
   // Basic trading terminal page, allows user to select a company to trade stocks of
@@ -143,10 +146,10 @@ tradeServer.post("/trade/placeBid", async(req, res) => {
     }
 
     const company1 = await request(options1)
-
+    let stockPrice
     if(company1)
     {
-    const stockPrice = company1.stockPrice;
+    stockPrice = company1.price; //company1.stockPrice;
     }
     else
     {
@@ -188,8 +191,8 @@ tradeServer.post("/trade/placeBid", async(req, res) => {
         profile.availableCash = availableCash - profile.lockedCash;
         profile.availableCash = profile.availableCash -(((bidPrice*volume)/100)*5);
         
-       publish('bid',finalBid);
-       publish('profile',profile);
+       publish("Bid",finalBid);
+      // publishProfile("profile",profile);
        res.send("Bid Placed(Sell Bid)").status(200);
    
      }
@@ -215,8 +218,8 @@ tradeServer.post("/trade/placeBid", async(req, res) => {
        profile.availableCash = profile.availableCash -(((bidPrice*volume)/100)*5);
 
        
-       publish('bid',finalBid);
-       publish('profile',profile);
+       await publish("Bid",finalBid);
+       await publish("profile",profile);
        res.send("Bid Placed(Sell Bid)").status(200);
                        
      }
@@ -254,8 +257,7 @@ tradeServer.post("/trade/placeBid", async(req, res) => {
   action:"sell"});
   
     await finalBid.save();
-     // res.send("Bid Placed(Sell Bid)").status(200);
-    publish('bid',finalBid);
+    await publish("Bid",finalBid);
     res.send("Bid Placed(Sell Bid)").status(200);
   }
 }
@@ -298,7 +300,7 @@ tradeServer.post("/trade/cancel", async(req, res) => {
 
   if(data)
   {
-  publish('cancelledBid',data);
+  await publish("Cancel",data);
   res.send("Bid sucessfully cancelled").status(200);
   }
   else

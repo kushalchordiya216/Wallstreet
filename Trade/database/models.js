@@ -12,7 +12,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
  */
 const bidSchema = new mongoose.Schema(
   {
-    user: { type: String },
+    user: { type: ObjectId },//was String
     company: { type: String },
     volume: { type: Number },
     price: { type: Number },

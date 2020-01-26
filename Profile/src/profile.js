@@ -1,6 +1,6 @@
 require("../database/connector");
 const express = require("express");
-const Profile = require("../database/models");
+const {Profile,profileSchema} = require("../database/models");
 const mongoose = require('mongoose');
 
 
@@ -35,6 +35,7 @@ profileServer.get("/profile", async (req, res) => {
 
 profileServer.post("/profile", async (req, res) => {
   console.log("Creating new profile");
+  console.log(req.body);
   try {
     
      
