@@ -84,13 +84,7 @@ typings/
 # FuseBox cache
 .fusebox/
 
-# DynamoDB Local files
-.dynamodb/
-
-kafka*/
-
 Deprecated/*
-.Deprecated/
-runall.sh
 .vscode/launch.json
 .vscode/tasks.json
+Backdoor/

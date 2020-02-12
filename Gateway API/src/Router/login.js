@@ -42,13 +42,16 @@ loginRouter.post("/register", async (req, res) => {
       headers: { "content-type": "application/json" },
       json: true,
       method: "POST",
-      body: { user: req._id, email: req.body.email }
+      body: { _id: user._id, name: req.body.name, email: req.body.email }
     };
-    // REST API call to profile service
     request(options, function(err, response, body) {
       if (!err) {
         res.cookie("Authorization", token);
         res.send(body);
+      }
+      // if new profile not created, delete created user and send error message back to user
+      else {
+        user.remove();
       }
     });
   } catch (error) {
