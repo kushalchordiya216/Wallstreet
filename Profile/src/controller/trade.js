@@ -1,12 +1,8 @@
 const express = require("express");
 const request = require("request-promise");
-const { Bid, Cancel, Profile } = require("../../database/models");
+const { Bid } = require("../../database/models");
 const tradeRouter = express.Router();
-const { publish } = require("../utils/publish");
-
-require("../../database/connector");
-require("../utils/pricesListener");
-require("../utils/transactionListener");
+const { publish } = require("../../utils/producers/publish");
 
 tradeRouter.use(express.json());
 
@@ -15,10 +11,10 @@ tradeRouter.post("/trade/placeBids", async (req, res) => {
   // To know about the different kinds of bids that can be made, see User/database/models.js/bidSchema
 
   const bid = new Bid(req.body);
-  bid.populate("user");
+  //bid.populate("user");
 
   try {
-    const availableCash = bid.user.availableCash;
+    const availableCash = bid.user.cash;
     const userStocks = bid.user.stocks;
 
     /**************************************** Buy bid logic ***************************************************/
@@ -60,9 +56,11 @@ tradeRouter.post("/trade/placeBids", async (req, res) => {
       }
     } else {
       /********************************************* Sell bid logic *************************************************/
-      const companyStock = userStocks.filter(stock => {
+      let companyStock = userStocks.filter(stock => {
         return stock[company] === bid.company;
       });
+      // will return array
+      companyStock = companyStock[0];
 
       // check if user owns enough shares that they are trying to sell
       if (companyStock) {
@@ -74,35 +72,14 @@ tradeRouter.post("/trade/placeBids", async (req, res) => {
           res.send("Sell bid placed").status(200);
         }
       } else {
-        res.send("No Stock of specified company Present").status(200);
+        res
+          .send("No Stock of specified company Present in portfolio")
+          .status(200);
       }
     }
   } catch (e) {
     res.send("Bid placing failed").status(404);
     console.log(e);
-  }
-});
-
-tradeRouter.post("/cancel/:id", async (req, res) => {
-  // cancel pending bid
-  // the bid id,which is sent in the url params, will be used to find and cancel the bid
-  // cancellation will also be published to a queue
-
-  const bidId = req.params.id;
-  let query = Bid.findOneAndRemove({ _id: bidId });
-  try {
-    const data = await query.exec();
-    console.log(data);
-    const cancel = new Cancel(data);
-    if (data) {
-      await publish("Cancelled", data);
-      await cancel.save();
-      res.send("Bid sucessfully cancelled").status(200);
-    } else {
-      res.send("Bid Not Present, may have been executed already").status(200);
-    }
-  } catch (e) {
-    res.send("Error while cancelling").status(404);
   }
 });
 

@@ -12,24 +12,11 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
  * Total worth is a cumulative addition of assets held as stock and cash, more weight is pressed on stocks
  */
 const profileSchema = new mongoose.Schema({
-  _id: ObjectId,
   name: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   bio: { type: String },
   avatar: { type: String },
-  availableCash: {
-    type: Number,
-    default: 4000000
-  },
-  lockedCash: {
-    type: Number,
-    default: 0
-  },
-  totalCash: {
-    type: Number,
-    default: 4000000
-  },
-  TotalWorth: {
+  cash: {
     type: Number,
     default: 4000000
   },
@@ -45,17 +32,8 @@ const profileSchema = new mongoose.Schema({
         type: Number
       }
     }
-  ],
-  stockWorth: {
-    type: Number,
-    default: 0
-  }
+  ]
 });
-
-profileSchema.methods.lockCash = function(cash) {
-  this.availableCash -= cash;
-  this.lockedCash += cash;
-};
 
 //TODO: optimize with worker threads
 //TODO: Use MongoDB bulwrites instead of updateOne
@@ -97,10 +75,10 @@ const Profile = mongoose.model("profile", profileSchema);
  * most of the attributes are self explanatory
  * action can have two values (buy / sell)
  * category can have the following values
- * - market price
- * - limit price
- * - stop loss
- * To know how each category of bid is processed, visit Transactions/src/transactions.js
+ * - market price/stop loss
+ * - options
+ * - futures
+ * To know how each category of bid is processed, visit Transactions/src/controller/transactions.js
  */
 const bidSchema = new mongoose.Schema(
   {
@@ -115,31 +93,33 @@ const bidSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-bidSchema.pre("save", async function updateProfile() {
-  await Profile.where({ _id: this.user._id })
-    .update({
-      $inc: { lockedCash: this.price * this.volume }
+bidSchema.pre("save", async function() {
+  if (this.action === "Buy") {
+    await Profile.where({ _id: this.user._id })
+      .update({ $inc: { cash: -(this.price * this.volume) * 1.05 } })
+      .exec();
+  } else if (this.action === "Sell") {
+    await Profile.where({
+      _id: this.user._id,
+      "stocks.company": this.company
     })
-    .update({ $inc: { availableCash: -(this.price * this.volume) * 1.05 } })
-    .exec();
+      .update({ $inc: { "stocks.$.volume": -this.volume } })
+      .exec();
+  }
 });
 
-bidSchema.pre("findOneAndRemove", async function updateProfile() {
-  await Profile.where({ _id: this.user._id })
-    .update({
-      $inc: { lockedCash: -(this.price * this.volume) }
-    })
-    .update({ $inc: { availableCash: this.price * this.volume } })
-    .exec();
+bidSchema.pre("findOneAndUpdate", async function() {
+  if (this.action === "Buy") {
+    await Profile.where({ _id: this.user._id })
+      .update({ $inc: { cash: this.price * this.volume } })
+      .exec();
+  } else if (this.action === "Sell") {
+    await Profile.where({ _id: this.user._id, "stocks.company": this.company })
+      .update({ $inc: { "stocks.$.volume": -this.volume } })
+      .exec();
+  }
 });
 
 const Bid = mongoose.model("Bids", bidSchema);
 
-const cancellationScehma = new mongoose.Schema(
-  {
-    _id: { type: ObjectId }
-  },
-  { timestamps: true }
-);
-const Cancel = mongoose.model("cancellation", cancellationScehma);
-module.exports = { Bid: Bid, Cancel: Cancel, Profile: Profile };
+module.exports = { Bid: Bid, Profile: Profile };

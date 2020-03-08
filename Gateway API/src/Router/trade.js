@@ -54,11 +54,14 @@ tradeRouter.post("trade/:company", auth, async (req, res) => {
   }
 });
 
-tradeRouter.post("/cancel/:id", auth, (req, res) => {
+/*
+req.body must have id of the bid to be cancelled
+*/
+tradeRouter.post("/cancel/", auth, (req, res) => {
   const options = {
-    uri: "http://localhost:3001/cancel/" + req.params.id,
+    uri: "http://localhost:3006/cancel", // request for cancellation goes directly to transactions service
     method: "POST",
-    body: req.body
+    body: { user: req._id, _id: req.body.id, action: req.body.action }
   };
   try {
     request(options, function(err, _response, body) {

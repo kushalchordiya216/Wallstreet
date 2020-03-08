@@ -1,6 +1,6 @@
 require("../database/connector");
 const { Buy, Sell } = require("../database/models");
-const kafka = require('kafka-node');
+const kafka = require("kafka-node");
 //const { producer } = require("./kafka");
 
 /**
@@ -77,22 +77,16 @@ const publishRollback = arr => {
       payloads.push({ topic: "Rolledback", messages: element });
     });
 
-
-    const client1 =  new kafka.KafkaClient('localhost:2181');
+    const client1 = new kafka.KafkaClient("localhost:2181");
     const producer = new kafka.Producer(client1);
 
     producer.on("ready", function() {
-      console.log("Sending RolledBack PAyloads")
-      producer.send(payloads,function(err,data){
-        if(err)
-        {
+      console.log("Sending RolledBack PAyloads");
+      producer.send(payloads, function(err, data) {
+        if (err) {
           console.log("NOT rolledBack");
-        }
-  
-        else
-        {
+        } else {
           console.log("RolledBack");
-
         }
       });
     });

@@ -1,10 +1,13 @@
 // imports;
 const express = require("express");
+const { profileRouter } = require("./controller/profile");
+const { tradeRouter } = require("./controller/trade");
+
+//background processes
 require("../database/connector");
-const { profileRouter } = require("./Router/profileController");
-const { tradeRouter } = require("./Router/tradeController");
-require("./utils/pricesListener");
-require("./utils/transactionListener");
+require("../utils/consumers/cancelListener");
+require("../utils/consumers/transactionListener");
+require("../utils/consumers/pricesListener");
 
 // decalre constants
 const server = express();

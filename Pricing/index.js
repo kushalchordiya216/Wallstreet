@@ -39,12 +39,11 @@ let transactionsArray = [];
 
 /***************************************** Set most recent Offsets for both consumers ******************************************/
 
-const client = new kafka.KafkaClient('localhost:2181');
-const client1 = new kafka.KafkaClient('localhost:2181');
+const client = new kafka.KafkaClient("localhost:2181");
+const client1 = new kafka.KafkaClient("localhost:2181");
 
 const offset = new kafka.Offset(client);
 const offset1 = new kafka.Offset(client1);
-
 
 offset.fetch([{ topic: "Bids", partition: 0, time: -1 }], (err, data) => {
   let latestOffset = data["Bids"]["0"][0];
@@ -60,13 +59,9 @@ offset1.fetch(
 
 /******************************************* Consume data from both topics **************************************/
 
-
-
-const bidsConsumer = new kafka.Consumer(client, 
-  [{ topic: 'Bids', partition: 0 }],
-  
-  
-);
+const bidsConsumer = new kafka.Consumer(client, [
+  { topic: "Bids", partition: 0 }
+]);
 
 bidsConsumer.on("message", async function(message) {
   console.log("Bids");
@@ -76,16 +71,16 @@ bidsConsumer.on("message", async function(message) {
   } else {
     buyBidsArray.push(bid);
   }
-  console.log(bid)
+  console.log(bid);
 });
 
-const transactionsConsumer = new kafka.Consumer(client1,
-   
- [{ topic: 'transactions', partition: 0 }],
-  
+const transactionsConsumer = new kafka.Consumer(
+  client1,
+
+  [{ topic: "transactions", partition: 0 }]
 );
 
-transactionsConsumer.on("message",async function(message) {
+transactionsConsumer.on("message", async function(message) {
   const transaction = JSON.parse(message.value);
   console.log("Consumer");
   console.log(transaction);
@@ -101,21 +96,21 @@ transactionsConsumer.on("message",async function(message) {
 async function main() {
   setInterval(async () => {
     // pause both consumers momentarily to not have asynchronous ops on the datastructures defined above
-   // bidsConsumer.pause();
+    // bidsConsumer.pause();
     //transactionsConsumer.pause();
     console.log(transactionsArray);
     // accumulate prices and spreads
     let newPrices = accumulateTransactions(transactionsArray);
     let spread = accumulateSpread(transactionsArray);
     transactionsArray = []; // reset transactionArray to not count any transactions twice
-    
+
     // fetch existing prices from db
-    let currentPricesArr = await Company.find({});// Company.find({},'name price');
-    
-    let currentPricesObj = {}
+    let currentPricesArr = await Company.find({}); // Company.find({},'name price');
+
+    let currentPricesObj = {};
     for (let index = 0; index < currentPricesArr.length; index++) {
-      currentPricesObj[currentPricesArr[index].name] = currentPricesArr[index].price;
-      
+      currentPricesObj[currentPricesArr[index].name] =
+        currentPricesArr[index].price;
     }
     console.log(currentPricesObj["bosch"]);
 
@@ -135,7 +130,7 @@ async function main() {
       }
       newPrices[company] += 0.1 * bidRates[company];
     }
-    
+
     console.log(newPrices);
 
     //Reset them as they could be resused to carry out changes in prices
@@ -147,13 +142,15 @@ async function main() {
     publishPrices(newPrices);
     publishSpread(spread);
     updatePrices(newPrices);
-    
-    // resume consuming 
+
+    // resume consuming
     bidsConsumer.resume();
     transactionsConsumer.resume();
     console.log("Alright");
-  }, 30000);//60000
+  }, 30000); //60000
 }
 
 /************************************************** Call the main function *************************************************/
 main();
+
+/************************************************** Start pricing server ***************************************************/

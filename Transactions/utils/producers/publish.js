@@ -1,5 +1,4 @@
-const kafka = require("kafka-node");
-const { producer } = require("./kafka");
+const { producer } = require("../kafka");
 
 const publish = (topic, msg) => {
   return new Promise((resolve, reject) => {
@@ -17,7 +16,7 @@ const publish = (topic, msg) => {
           console.log(err);
           return reject("Failed Publish");
         } else {
-          console.log(msg);
+          console.log(data);
           return resolve("Publish Success");
         }
       });

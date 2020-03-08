@@ -1,7 +1,6 @@
-require("../database/connector");
-const { Buy, Sell, Transactions } = require("../database/models");
-const {client, producer, bidConsumer, cancelConsumer } = require("./kafka");
-const kafka = require('kafka-node');
+const { Buy, Sell, Transactions } = require("../../database/models");
+const { publish } = require("../../utils/producers/publish");
+const kafka = require("kafka-node");
 
 /**
  * Called eveytime a new bid is fetched
@@ -14,14 +13,13 @@ const kafka = require('kafka-node');
  * - company: company name
  * - action: buy/sell
  * - volume
- * - price
+ * - price:
+ * - category: options/futures/stocks
  */
 const processTransactions = async bid => {
   let transactionStatus = "full";
   do {
-    var bestSell1 = Sell.find(
-      { company: bid.company }
-    )
+    var bestSell1 = Sell.find({ company: bid.company })
       .sort({ price: 1 })
       .limit(1);
 
@@ -31,13 +29,14 @@ const processTransactions = async bid => {
       .limit(1);
 
     const bestSell2 = await bestSell1;
-    const bestBuy2  = await bestBuy1;
+    const bestBuy2 = await bestBuy1;
 
-    const bestSell  = bestSell2[0];
-    const bestBuy   = bestBuy2[0];
+    const bestSell = bestSell2[0];
+    const bestBuy = bestBuy2[0];
     console.log(bestBuy);
     console.log(bestSell);
 
+    //TODO: error handling for when buy or sell bids don't exist for a particular company
     if (bestSell.price <= bestBuy.price) {
       transactionStatus = executeTransactions(bestSell, bestBuy);
     } else {
@@ -58,7 +57,7 @@ const processTransactions = async bid => {
 const executeTransactions = async (sell, buy) => {
   try {
     let status = "partial";
-    let buyTableUpdate, sellTableUpdate, transaction;
+    let buyTableUpdate, sellTableUpdate;
     const minVolume = Math.min(sell.volume, buy.volume);
     if (buy.volume === sell.volume) {
       buyTableUpdate = Buy.findByIdAndDelete(buy._id);
@@ -76,25 +75,20 @@ const executeTransactions = async (sell, buy) => {
       });
     }
     // TODO: make schema methods on bidSchema for partial updates
-    console.log("TRANNNSSSSSSSSSSSSSSSSSSSSS");
-    console.log(buy);
-    console.log(sell);
-    //console.log(buy.company);
+
     let spread = (buy.price - sell.price) * minVolume;
-    transaction = new Transactions({
-      buyer: buy.user,
-      seller: sell.user,
+    let transaction = new Transactions({
+      buyer: buy.user._id,
+      seller: sell.user._id,
       company: buy.company,
       volume: minVolume,
       price: sell.price,
       spread: spread
     });
-    const transactionSave = transaction.save();
-
-    await transactionSave;
+    await transaction.save();
     await buyTableUpdate;
     await sellTableUpdate;
-    publishTransactions(transaction);
+    publish("Transactions", transaction);
     // send all requests first and wait for them to complete asynchronously
     return status;
   } catch (error) {
@@ -102,57 +96,7 @@ const executeTransactions = async (sell, buy) => {
   }
 };
 
-/**
- * Publish completed transactions/cancellation object to the relevant queue topic
- * @param transaction transaction object, which is stringified and published
- * contains following keys
- *
- * - buyer _id
- * - seller _id
- * - company name
- * - volume of trade
- * - price of transaction
- * - spread if any
- */
-const publishTransactions = transaction => {
- /* payloads = [{ topic: "transactions", messages: JSON.stringify(transaction) }];
-  producer.on("ready", function() {
-    producer.send(payloads);
-  });*/
-
-  const client = new kafka.KafkaClient('localhost:2181');
-  const bidProducer = new kafka.Producer(client);
-  
-
-payloads = [
-    {
-      topic:"transactions",
-      messages:JSON.stringify(transaction),
-      partition:0
-    }
-    ];
-  
-    bidProducer.on('ready', function(){
-  
-      bidProducer.send(payloads,function(err,data){
-        if(err)
-        {
-          console.log("NOT YOO");
-        }
-  
-        else
-        {
-          console.log("YOO");
-
-        }
-        
-      })
-  
-    })
-
-  // TODO: Handle error if message queue is down
-  // TIP: look into async.queue
-};
+//TODO: Functions to process options and futures calls
 
 module.exports = {
   processTransactions: processTransactions

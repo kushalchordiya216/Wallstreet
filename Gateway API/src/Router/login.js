@@ -44,14 +44,13 @@ loginRouter.post("/register", async (req, res) => {
       method: "POST",
       body: { _id: user._id, name: req.body.name, email: req.body.email }
     };
-    request(options, function(err, response, body) {
-      if (!err) {
+    request(options, async function(err, response, body) {
+      if (response.statusCode == 400 || err) {
+        await user.remove();
+        res.status(400).send("Problem creating your profile" + err);
+      } else {
         res.cookie("Authorization", token);
         res.send(body);
-      }
-      // if new profile not created, delete created user and send error message back to user
-      else {
-        user.remove();
       }
     });
   } catch (error) {

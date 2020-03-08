@@ -1,11 +1,12 @@
 const kafka = require("kafka-node");
-const { client } = require("./initializeKafka");
+const { client } = require("./producers/initializeKafka");
 
 const consumer = new kafka.Consumer(
   client,
   [
     { topic: "Prices", partition: 0, offset: -1 },
-    { topic: "Transactions", partition: 0, offset: -1 }
+    { topic: "Transactions", partition: 0, offset: -1 },
+    { topic: "Cancelled", partition: 0, offset: -1 }
   ],
   {
     autoCommit: true,

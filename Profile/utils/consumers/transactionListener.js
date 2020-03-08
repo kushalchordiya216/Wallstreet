@@ -1,4 +1,4 @@
-const { consumer } = require("./kafka");
+const { consumer } = require("../kafka");
 const { Profile, Bid } = require("../../database/models");
 
 consumer.on("message", async function(message) {
@@ -16,8 +16,10 @@ consumer.on("message", async function(message) {
      * - spread if any
      */
 
-    let bulkQueries = [];
+    let bulkQueriesProfile = [];
+    let bulkQueriesBids = [];
     transactions.forEach(transaction => {
+      // increase stocks for buyer
       let query1 = {
         updateOne: {
           filter: {
@@ -28,43 +30,38 @@ consumer.on("message", async function(message) {
         }
       };
 
+      //increase cash for seller
       let query2 = {
-        updateOne: {
-          filter: { _id: transaction.buyer },
-          update: {
-            $inc: {
-              lockedCash: -(
-                transaction.volume * transaction.price +
-                transaction.spread
-              )
-            }
+        filter: { _id: transaction.buyer },
+        update: {
+          $inc: {
+            cash: transaction.volume * transaction.price
           }
         }
       };
+      bulkQueriesProfile.push(query1, query2);
 
+      //update bid status for users to see
       let query3 = {
         updateOne: {
-          filter: {
-            _id: transaction.seller,
-            "stocks.company": transaction.company
-          },
-          update: { $inc: { "stocks.$.volume": -transaction.volume } }
+          filter: { _id: transaction.buybid },
+          update: { status: transaction.buystatus }
         }
       };
 
       let query4 = {
-        filter: { _id: transaction.buyer },
-        update: {
-          $inc: {
-            availableCash: transaction.volume * transaction.price
-          }
+        updateOne: {
+          filter: { _id: transaction.sellbid },
+          update: { status: transaction.sellstatus }
         }
       };
-      bulkQueries.push(query1, query2, query3, query4);
+
+      bulkQueriesBids.push(query3, query4);
     });
 
-    bulk_res = await Profile.bulkWrite(bulkQueries);
-    console.log(bulk_res.modifiedCount);
+    let bulk_res_profile = await Profile.bulkWrite(bulkQueriesProfile);
+    let bulk_res_bid = await Bid.bulkWrite(bulkQueriesBids);
+    console.log(bulk_res_profile.modifiedCount, bulk_res_bid.modifiedCount);
     // TODO: write synthetic test for this without kafka consumer, just array object similar to transactions
 
     // var bulk = Profile.collection.initializeOrderedBulkOp();

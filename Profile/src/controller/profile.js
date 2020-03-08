@@ -1,6 +1,6 @@
 const express = require("express");
 require("../../database/connector");
-const { Profile, Bid, Cancel } = require("../../database/models");
+const { Profile, Bid } = require("../../database/models");
 
 const profileRouter = express.Router();
 profileRouter.use(express.json());
@@ -16,11 +16,8 @@ profileRouter.post("/editProfile", async (req, res) => {
 //TODO: paginate this view
 profileRouter.get("/history", async (req, res) => {
   // fetch user transaction history
-  let bidQuery = Bid.find({ _id: req.body._id });
-  let cancelQuery = Cancel.find({ _id: req.body._id });
-  let bids = await bidQuery;
-  let cancellations = await cancelQuery;
-  res.send({ bids: bids, cancellations: cancellations });
+  let history = await Bid.find({ _id: req.body._id });
+  res.send(history);
 });
 
 profileRouter.get("/profile", async (req, res) => {

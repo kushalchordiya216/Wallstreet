@@ -27,13 +27,13 @@ var topicsToCreate = [
   }
 ];
 
-client.createTopics(topicsToCreate, (err, data) => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log(data);
-  }
-});
+// client.createTopics(topicsToCreate, (err, data) => {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     console.log(data);
+//   }
+// });
 
 module.exports = {
   client: client
