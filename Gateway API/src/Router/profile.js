@@ -12,6 +12,7 @@ profileRouter.get("/profile", auth, (req, res) => {
     method: "GET",
     _id: req._id
   };
+  res.setHeader("Content-Type", "application/json");
   request(options, function(err, response, body) {
     if (err) {
       res.status(400).send(err);
@@ -26,25 +27,7 @@ profileRouter.get("/history", auth, (req, res) => {
     method: "GET",
     _id: req.user._id
   };
-  request(options, function(err, response, body) {
-    if (err) {
-      res.status(400).send(err);
-    }
-    res.send(body);
-  });
-});
-
-profileRouter.get("/editProfile", auth, (req, res) => {
-  res.send("Profile editing page");
-});
-
-profileRouter.post("/editProfile", auth, (req, res) => {
-  // TODO: set up API call to profile service to edit profile
-  const options = {
-    url: "http://localhost:3001/editProfile",
-    method: "POST",
-    body: req.body
-  };
+  res.setHeader("Content-Type", "application/json");
   request(options, function(err, response, body) {
     if (err) {
       res.status(400).send(err);
@@ -67,5 +50,7 @@ profileRouter.get("/logout", auth, async (req, res) => {
     res.status(400).send("Something went wrong");
   }
 });
+
+//TODO: updateAvatar, updateBio
 
 module.exports = { profileRouter: profileRouter };

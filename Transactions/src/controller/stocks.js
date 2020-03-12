@@ -2,6 +2,26 @@ const { Buy, Sell, Transactions } = require("../../database/models");
 const { publish } = require("../../utils/producers/publish");
 const kafka = require("kafka-node");
 
+// TODO: use node cache to fetch bids
+const fetchBestBids = async company => {
+  var bestSell1 = Sell.find({ company: company })
+    .sort({ price: 1 })
+    .limit(1);
+
+  var bestBuy1 = Buy.find({ company: company })
+    .sort({ price: -1 })
+    .limit(1);
+
+  try {
+    let sellBids = await bestSell1;
+    let buyBids = await bestBuy1;
+    let bestBids = [buyBids[0], sellBids[0]];
+    return bestBids;
+  } catch (error) {
+    return [null, null];
+  }
+};
+
 /**
  * Called eveytime a new bid is fetched
  * check tables to see if there is any new transaction that can be executed
@@ -19,35 +39,26 @@ const kafka = require("kafka-node");
 const processTransactions = async bid => {
   let transactionStatus = "full";
   do {
-    var bestSell1 = Sell.find({ company: bid.company })
-      .sort({ price: 1 })
-      .limit(1);
-
-    //This is saved as an query so you cant access object directly
-    var bestBuy1 = Buy.find({ company: bid.company })
-      .sort({ price: -1 })
-      .limit(1);
-
-    const bestSell2 = await bestSell1;
-    const bestBuy2 = await bestBuy1;
-
-    const bestSell = bestSell2[0];
-    const bestBuy = bestBuy2[0];
-    //console.log(bestBuy);
-   // console.log(bestSell);
-
-   //If buybids and sellbid are not present i.e. empty skip calculations
-    
-    if (!(bestSell[0] && bestBuy[0]) && (bestSell.price <= bestBuy.price)) {
-      transactionStatus = executeTransactions(bestSell, bestBuy);
-    } else {
-      transactionStatus = "full";
+    try {
+      let [buy, sell] = fetchBestBids(bid.company);
+      if (buy == null || sell == null) {
+        // either no sell bids or no buy bids or both, no transactions can be made
+        return;
+      }
+      if (sell.price <= buy.price) {
+        transactionStatus = executeTransactions(bestSell, bestBuy);
+      } else {
+        transactionStatus = "full"; //no sell bid matches any buybid, move on to next transaction
+      }
+    } catch (error) {
+      console.log(
+        `Error at Transactions/src/controller/stocks.js\nError while making transaction for stocks of ${bid.company}`
+      );
+      console.log(`\n${error}`);
+      return;
     }
-  
-    setTimeout(() => {}, 1000); // delay make sure a single company's bids don't take up the entire event loop
+    setTimeout(() => {}, 1000); // 1s delay make sure a single company's bids don't take up the entire event loop
   } while (transactionStatus == "partial"); // incase of partial transactions keep checking again until a bid can't be executed
-  // TODO: incase of partial transactions optimize by remembering which bid was executed partially so it doesnt have to be fetched again
-  // TODO: in memory redis cache
 };
 
 /**
@@ -82,6 +93,8 @@ const executeTransactions = async (sell, buy) => {
     let transaction = new Transactions({
       buyer: buy.user._id,
       seller: sell.user._id,
+      buybid: buy._id,
+      sellbid: sell._id,
       company: buy.company,
       volume: minVolume,
       price: sell.price,

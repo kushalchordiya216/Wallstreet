@@ -11,7 +11,7 @@ tradeRouter.post("/trade/placeBids", async (req, res) => {
   // To know about the different kinds of bids that can be made, see User/database/models.js/bidSchema
 
   const bid = new Bid(req.body);
-  //bid.populate("user");
+  bid.populate("user");
 
   try {
     const availableCash = bid.user.cash;
@@ -26,7 +26,7 @@ tradeRouter.post("/trade/placeBids", async (req, res) => {
 
       // fetch company profile to see if current market price is within acceptable range of bid.price
 
-      // FIXME: Possible to use the pricesConsumer to store list instead of making API calls each time
+      // FIXME: pass value of stocks in request itself
 
       const options1 = {
         uri: "http://localhost:3006/profile",

@@ -1,5 +1,5 @@
 const kafka = require("kafka-node");
-const { client } = require("./producers/initializeKafka");
+const client = new kafka.KafkaClient("localhost:2181");
 
 const consumer = new kafka.Consumer(
   client,

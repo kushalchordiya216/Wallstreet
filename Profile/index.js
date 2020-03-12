@@ -1,13 +1,13 @@
 // imports;
 const express = require("express");
-const { profileRouter } = require("./controller/profile");
-const { tradeRouter } = require("./controller/trade");
+const { profileRouter } = require("./src/controller/profile");
+const { tradeRouter } = require("./src/controller/trade");
 
 //background processes
-require("../database/connector");
-require("../utils/consumers/cancelListener");
-require("../utils/consumers/transactionListener");
-require("../utils/consumers/pricesListener");
+require("./database/connector");
+require("./utils/consumers/cancelListener");
+require("./utils/consumers/transactionListener");
+require("./utils/consumers/pricesListener");
 
 // decalre constants
 const server = express();

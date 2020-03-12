@@ -4,6 +4,7 @@
   "description": "gateway API through which users interact with the services",
   "main": "index.ts",
   "scripts": {
+    "start": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "kushalchordiya216",

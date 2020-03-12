@@ -38,6 +38,7 @@ tradeRouter.post("trade/:company", auth, async (req, res) => {
   const options = {
     uri: "http://localhost:3001/placeBids/",
     method: "POST",
+    json: true,
     body: req.body
   };
   try {
@@ -61,6 +62,7 @@ tradeRouter.post("/cancel/", auth, (req, res) => {
   const options = {
     uri: "http://localhost:3006/cancel", // request for cancellation goes directly to transactions service
     method: "POST",
+    json: true,
     body: { user: req._id, _id: req.body.id, action: req.body.action }
   };
   try {

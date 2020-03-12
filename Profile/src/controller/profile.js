@@ -5,14 +5,6 @@ const { Profile, Bid } = require("../../database/models");
 const profileRouter = express.Router();
 profileRouter.use(express.json());
 
-//TODO: allow APIs to edit profile
-profileRouter.post("/editProfile", async (req, res) => {
-  // accept changes to profile schema objects like avatar pic, bio, etc.
-  let result = await Profile.updateOne({ _id: req.body._id }, req.body);
-  // if this doesn't work as accepted, use schema method defined for profile schema in model.js
-  res.send(result);
-});
-
 //TODO: paginate this view
 profileRouter.get("/history", async (req, res) => {
   // fetch user transaction history

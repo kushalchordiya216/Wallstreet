@@ -17,23 +17,6 @@ const bidSchema = new mongoose.Schema(
 );
 bidSchema.index({ price: 1, company: 1 });
 
-bidSchema.statics.fetch = async function(order, company, limit) {
-  let results = await this.find({ company: company })
-    .sort({ prices: order })
-    .limit(limit);
-  return results;
-};
-
-bidSchema.pre("remove", async function() {
-  // publish to cancelled topic in kafka
-  try {
-    msg = { _id: this._id };
-    await publish("Cancel", msg);
-  } catch (e) {
-    throw new Error("Publishing to cancellation failed");
-  }
-});
-
 const Buy = mongoose.model("buytable", bidSchema);
 const Sell = mongoose.model("selltable", bidSchema);
 const Call = mongoose.model("calltable", bidSchema);
@@ -46,6 +29,8 @@ const transactionSchema = new mongoose.Schema(
   {
     buyer: { type: ObjectId },
     seller: { type: ObjectId },
+    buybid: { type: ObjectId },
+    sellbid: { type: ObjectId },
     company: { type: String },
     volume: { type: Number },
     price: { type: Number },
@@ -59,7 +44,5 @@ const Transactions = mongoose.model("transactions", transactionSchema);
 module.exports = {
   Buy: Buy,
   Sell: Sell,
-  Call: Call,
-  Put: Put,
   Transactions: Transactions
 };

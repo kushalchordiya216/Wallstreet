@@ -1,8 +1,8 @@
 // dependencies
 const express = require("express");
-const { loginRouter } = require("./Router/login");
-const { profileRouter } = require("./Router/profile");
-const { tradeRouter } = require("./Router/trade");
+const { loginRouter } = require("./src/Router/login");
+const { profileRouter } = require("./src/Router/profile");
+const { tradeRouter } = require("./src/Router/trade");
 
 const cookieParser = require("cookie-parser");
 

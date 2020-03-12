@@ -17,6 +17,8 @@ loginRouter.post("/login", async (req, res) => {
       req.body.email,
       req.body.password
     );
+    console.log(user);
+
     const token = await user.generateAuthToken();
     res.cookie("Authorization", token);
     res.redirect("/profile");
@@ -55,6 +57,21 @@ loginRouter.post("/register", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    res.status(400).send(error);
+  }
+});
+
+loginRouter.get("updatePassword", auth, (_req, res) => {
+  res.send("Password update form");
+});
+
+loginRouter.post("updatePassword", auth, async (req, res) => {
+  try {
+    let user = await User.findById(req._id);
+    user.password = req.body.password;
+    await user.save();
+    res.send("password successfully updated!\n");
+  } catch (error) {
     res.status(400).send(error);
   }
 });
