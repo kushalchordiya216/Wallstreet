@@ -33,15 +33,17 @@ const processTransactions = async bid => {
 
     const bestSell = bestSell2[0];
     const bestBuy = bestBuy2[0];
-    console.log(bestBuy);
-    console.log(bestSell);
+    //console.log(bestBuy);
+   // console.log(bestSell);
 
-    //TODO: error handling for when buy or sell bids don't exist for a particular company
-    if (bestSell.price <= bestBuy.price) {
+   //If buybids and sellbid are not present i.e. empty skip calculations
+    
+    if (!(bestSell[0] && bestBuy[0]) && (bestSell.price <= bestBuy.price)) {
       transactionStatus = executeTransactions(bestSell, bestBuy);
     } else {
       transactionStatus = "full";
     }
+  
     setTimeout(() => {}, 1000); // delay make sure a single company's bids don't take up the entire event loop
   } while (transactionStatus == "partial"); // incase of partial transactions keep checking again until a bid can't be executed
   // TODO: incase of partial transactions optimize by remembering which bid was executed partially so it doesnt have to be fetched again

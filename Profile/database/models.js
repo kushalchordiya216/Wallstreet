@@ -20,6 +20,7 @@ const profileSchema = new mongoose.Schema({
     type: Number,
     default: 4000000
   },
+  stockWorth: {type:Number, default:0},
   stocks: [
     {
       company: {

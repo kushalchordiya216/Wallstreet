@@ -1,5 +1,5 @@
 const { consumer } = require("../kafka");
-const { Bid } = require("../../database/models");
+//const { Bid } = require("../../database/models");
 const { Profile, Bid } = require("../../database/models");
 
 let cancelToProfileQuery = cancel => {
