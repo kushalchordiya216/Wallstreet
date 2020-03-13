@@ -27,9 +27,11 @@ rollbackRouter.post("/cancel", async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.send(
-      "Bid could not be cancelled, may have been processed already, changes will reflect in your profile shortly"
-    );
+    res
+      .status(400)
+      .send(
+        "Bid could not be cancelled, may have been processed already, changes will reflect in your profile shortly"
+      );
   }
 });
 
@@ -38,7 +40,6 @@ rollbackRouter.post("/cancel", async (req, res) => {
  * removes those entries from the collection and publishes _ids to rollback topic
  */
 const removeInactive = async () => {
-  // FIXME: corner case of a transaction getting executed and rolled back at the same time
   // consider pausing bidConsumer when rollbacks are processed
   try {
     const buyBids = Buy.find(

@@ -13,7 +13,7 @@ tradeRouter.get("/trade", auth, async (req, res) => {
 tradeRouter.get("/trade/:company", auth, async (req, res) => {
   const company = req.params.company;
   const options = {
-    uri: "http://localhost:3006/profile/",
+    uri: "http://localhost:3007/profile/",
     method: "GET",
     body: {
       name: company
