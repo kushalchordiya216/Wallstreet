@@ -1,3 +1,8 @@
+//environment variales
+const config = require("dotenv").config({ path: "./config/dev.env" });
+console.table(config);
+
+//Imports
 require("./database/connector");
 const express = require("express");
 const { router } = require("./src/companyProfile");
@@ -5,7 +10,7 @@ const { main } = require("./src/pricing");
 
 //constants
 const pricingServer = express();
-const PORT = 3007 || process.env.PORT;
+const PORT = process.env.PRICING_PORT || 3003;
 
 // configure server
 pricingServer.use(express.json());

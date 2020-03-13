@@ -1,7 +1,6 @@
 const express = require("express");
 const request = require("request");
-const { auth, known_tokens } = require("../../middleware/auth");
-const { User } = require("../../database/models");
+const { auth } = require("../../middleware/auth");
 require("../../database/connector");
 
 const tradeRouter = express.Router();
@@ -13,7 +12,7 @@ tradeRouter.get("/trade", auth, async (req, res) => {
 tradeRouter.get("/trade/:company", auth, async (req, res) => {
   const company = req.params.company;
   const options = {
-    uri: "http://localhost:3007/profile/",
+    uri: `http://localhost:${process.env.PRICING_PORT}/profile/`,
     method: "GET",
     body: {
       name: company
@@ -36,7 +35,7 @@ tradeRouter.get("/trade/:company", auth, async (req, res) => {
 tradeRouter.post("trade/:company", auth, async (req, res) => {
   // req.body must have same type as bidSchema, found in Profile/database/model.js/bidSchema
   const options = {
-    uri: "http://localhost:3001/placeBids/",
+    uri: `http://localhost:${process.env.PROFILE_PORT}/placeBids/`,
     method: "POST",
     json: true,
     body: req.body
@@ -60,7 +59,7 @@ req.body must have id of the bid to be cancelled
 */
 tradeRouter.post("/cancel/", auth, (req, res) => {
   const options = {
-    uri: "http://localhost:3006/cancel", // request for cancellation goes directly to transactions service
+    uri: `http://localhost:${process.env.TRANSACTION_PORT}/cancel`, // request for cancellation goes directly to transactions service
     method: "POST",
     json: true,
     body: { user: req._id, _id: req.body.id, action: req.body.action }

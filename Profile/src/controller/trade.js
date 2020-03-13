@@ -29,11 +29,11 @@ tradeRouter.post("/trade/placeBids", async (req, res) => {
       // FIXME: pass value of stocks in request itself
 
       const options1 = {
-        uri: "http://localhost:3006/profile",
+        uri: `http://localhost:${process.env.PROFILE_PORT}/profile`,
         method: "GET",
         body: {
           _id: JSON.stringify({ _id }),
-          companyName: companyName
+          name: companyName
         },
         json: true
       };

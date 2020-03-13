@@ -75,15 +75,11 @@ const appendCancellation = cancellation => {
   }
 };
 
-const publishRollback = () => {
-  publish(Cancellations);
-  Cancellations = [];
-};
-
 const rollback = () => {
   setInterval(() => {
     removeInactive();
-    publishRollback();
+    publish(Cancellations);
+    Cancellations = [];
   }, 18000000);
 };
 

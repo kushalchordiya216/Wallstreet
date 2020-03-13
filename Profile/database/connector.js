@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 
+let host = process.env.DB_HOST;
+let port = process.env.DB_PORT;
+let name = process.env.DB_NAME;
+
 mongoose
-  .connect("mongodb://localhost:27017/Wallstreet", {
+  .connect(`mongodb://${host}:${port}/${name}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true

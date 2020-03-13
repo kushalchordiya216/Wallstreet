@@ -1,13 +1,13 @@
 const express = require("express");
 const request = require("request");
-const auth = require("../../middleware/auth");
-const { User, userSchema } = require("../../database/models");
+const { auth } = require("../../middleware/auth");
+const { User } = require("../../database/models");
 require("../../database/connector");
 
 const loginRouter = express.Router();
 
 /***************************************** LOGIN PATHS *****************************************/
-loginRouter.get("/login", (req, res) => {
+loginRouter.get("/login", (_req, res) => {
   res.send("Login page");
 });
 
@@ -40,7 +40,7 @@ loginRouter.post("/register", async (req, res) => {
     const token = await user.generateAuthToken();
 
     const options = {
-      url: "http://localhost:3001/profile",
+      url: `http://localhost:${process.env.PROFILE_PORT}/profile`,
       headers: { "content-type": "application/json" },
       json: true,
       method: "POST",
@@ -61,11 +61,11 @@ loginRouter.post("/register", async (req, res) => {
   }
 });
 
-loginRouter.get("updatePassword", auth, (_req, res) => {
-  res.send("Password update form");
+loginRouter.get("/updatePassword", auth, (_req, res) => {
+  res.send("password update page");
 });
 
-loginRouter.post("updatePassword", auth, async (req, res) => {
+loginRouter.post("/updatePassword", auth, async (req, res) => {
   try {
     let user = await User.findById(req._id);
     user.password = req.body.password;

@@ -8,7 +8,7 @@ const profileRouter = express.Router();
 
 profileRouter.get("/profile", auth, (req, res) => {
   const options = {
-    url: "http://localhost:3001/profile",
+    url: `http://localhost:${process.env.PROFILE_PORT}/profile`,
     method: "GET",
     _id: req._id
   };
@@ -23,7 +23,7 @@ profileRouter.get("/profile", auth, (req, res) => {
 
 profileRouter.get("/history", auth, (req, res) => {
   const options = {
-    url: "http://localhost:3001/history",
+    url: `http://localhost:${process.env.PROFILE_PORT}/history`,
     method: "GET",
     _id: req.user._id
   };

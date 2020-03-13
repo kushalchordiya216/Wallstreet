@@ -1,5 +1,5 @@
 const kafka = require("kafka-node");
-const client = new kafka.KafkaClient("localhost:2181");
+const client = new kafka.KafkaClient(`${process.env.KAFKA_BROKER}`);
 
 // Run the file to create topics on kafka instance, once created, it will run without issues
 // only eeds to be created once

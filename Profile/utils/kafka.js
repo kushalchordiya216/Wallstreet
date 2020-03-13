@@ -1,5 +1,5 @@
 const kafka = require("kafka-node");
-const client = new kafka.KafkaClient("localhost:2181");
+const client = new kafka.KafkaClient(`${process.env.KAFKA_BROKER}`);
 
 const consumer = new kafka.Consumer(
   client,

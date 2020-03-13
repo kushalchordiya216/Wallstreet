@@ -3,6 +3,14 @@ const { publish } = require("../../utils/producers/publish");
 const kafka = require("kafka-node");
 
 // TODO: use node cache to fetch bids
+/**
+ * Finds the best buyBid(highest price) and best Sellbid(lowest price) for a particular company
+ * Returns null if buybid or sellbid doesn't exist for given company
+ *
+ * @param {String} company name of company for whom best bids are to be found
+ *
+ * @returns {Array} array with best buyBid as first element, best sellbid as second elemenr
+ */
 const fetchBestBids = async company => {
   var bestSell1 = Sell.find({ company: company })
     .sort({ price: 1 })

@@ -3,21 +3,18 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "",
-    "start": "nodemon index.js",
-    "dev": "env-cmd ./config/dev.env nodemon index.js"
+    "start": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "kafka-node": "^5.0.0",
     "mongoose": "^5.8.3",
     "node-cache": "^5.1.0"
   },
-  "devDependencies": {
-    "env-cmd": "^10.0.1"
-  },
+  "devDependencies": {},
   "description": "Transactions Service"
 }

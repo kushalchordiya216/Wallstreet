@@ -1,3 +1,7 @@
+//environment variables
+const result = require("dotenv").config({ path: "./config/dev.env" });
+console.table(result);
+
 // imports;
 const express = require("express");
 const { profileRouter } = require("./src/controller/profile");
@@ -11,7 +15,7 @@ require("./utils/consumers/pricesListener");
 
 // decalre constants
 const server = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PROFILE_PORT || 3001;
 
 // configure server
 server.use(express.json());
