@@ -1,0 +1,27 @@
+{
+  "1": {
+    "name": "Kushal Chordiya",
+    "email": "chordiyakushal@gmail.com",
+    "password": "Kushal123"
+  },
+  "2": {
+    "name": "Nikhil Gawade",
+    "email": "ngawade911@gmail.com",
+    "password": "Nikhi123"
+  },
+  "3": {
+    "name": "Purvesh Jain",
+    "email": "purvesh.jain@gmail.com",
+    "password": "Purvesh123"
+  },
+  "4": {
+    "name": "Manav Peshwani",
+    "email": "manav.peshwani@gmail.com",
+    "password": "Manav123"
+  },
+  "5": {
+    "name": "Nipun Khivansara",
+    "email": "nipun.khivansara@gmail.com",
+    "password": "Nipun123"
+  }
+}

@@ -51,5 +51,6 @@ consumer.on("message", async function(message) {
     let bulk_res_profile = await Profile.bulkWrite(bulkUpdateProfile);
     let bulk_res_bid = await Bid.bulkWrite(bulkUpdateBids);
     console.log(bulk_res_profile.modifiedCount, bulk_res_bid.modifiedCount);
+    Profile.updateNetWorth();
   }
 });

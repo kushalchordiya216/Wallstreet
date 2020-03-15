@@ -62,6 +62,7 @@ consumer.on("message", async function(message) {
     let bulk_res_profile = await Profile.bulkWrite(bulkQueriesProfile);
     let bulk_res_bid = await Bid.bulkWrite(bulkQueriesBids);
     console.log(bulk_res_profile.modifiedCount, bulk_res_bid.modifiedCount);
+    Profile.updateNetWorth();
     // TODO: write synthetic test for this without kafka consumer, just array object similar to transactions
 
     // var bulk = Profile.collection.initializeOrderedBulkOp();

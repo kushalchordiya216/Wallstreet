@@ -1,0 +1,176 @@
+{%load static%}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Welcome to Wallstreet!</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="{% static 'bazaar/vendor/bootstrap/css/bootstrap.min.css'%}">
+    <!-- Font Awesome CSS-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <!-- Google fonts - Popppins for copy-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,800">
+    <!-- orion icons-->
+    <link rel="stylesheet" href="{% static 'bazaar/css/orionicons.css'%}">
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" href="{% static 'bazaar/css/style.default.css'%}" id="theme-stylesheet">
+    <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" href="{% static 'bazaar/css/custom.css'%}">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="{% static 'bazaar/img/favicon.png'%}">
+
+
+    <style type="text/css">
+        #loading {
+            width: 100%;
+            height: 100vh;
+            background: #000;
+        }
+        
+        .page-holder {
+            background: url('{% static 'bazaar/img/1.png'%}');
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body onload="start()">
+    <div id="loading"></div>
+    <!-- navbar-->
+    <header class="header">
+        <nav class="navbar navbar-expand-lg px-4 py-2 bg-white shadow"><a href="#" class="sidebar-toggler text-gray-500 mr-4 mr-lg-5 lead"><i class="fas fa-align-left"></i></a><a href="#" class="navbar-brand font-weight-bold text-uppercase text-base">Wallstreet</a>
+            <ul class="ml-auto d-flex align-items-center list-unstyled mb-0">
+
+                <li class="nav-item dropdown mr-3"><a id="notifications" href="http://example.com" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle text-gray-400 px-1"><i class="fa fa-bell"></i><span class="notification-icon"></span></a>
+                    <div aria-labelledby="notifications" class="dropdown-menu">
+                        <a href="{% url 'bazaar:news' %}" class="dropdown-item text-center"><small class="font-weight-bold headings-font-family text-uppercase">View News</small></a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown ml-auto">
+                    <a id="userInfo" href="http://example.com" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle"><img src="{% static 'bazaar/img/navLogo.png' %}" alt="Jason Doe" style="max-width: 1.5rem;" class="img-fluid rounded-circle shadow"></a>
+                    <div aria-labelledby="userInfo" class="dropdown-menu"><a href="#" class="dropdown-item"><strong class="d-block text-uppercase headings-font-family">{{ profile.user.username }}</strong><small>Cash: {{ profile.cash }}</small><br/><small>Net Worth: {{ profile.netWorth }}</small><br/><small>Rank: {{ profile.rank }}</small></a>
+                        <div class="dropdown-divider"></div><a href="../#sectionMyShares" class="dropdown-item">Your Shares</a>
+                        <div class="dropdown-divider"></div><a href="{% url 'bazaar:transactions' %}" class="dropdown-item">Transaction History</a>
+                        <div class="dropdown-divider"></div><a href="{%url 'bazaar:logoff'%}" class="dropdown-item">Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <div class="d-flex align-items-stretch">
+        <div id="sidebar" class="sidebar py-3">
+            <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">MAIN</div>
+            <ul class="sidebar-menu list-unstyled" style="margin-left:-15px;">
+                <li class="sidebar-list-item"><a href="{%url 'bazaar:index' %}" class="sidebar-link text-muted"><i class="o-home-1 mr-3 text-gray"></i><span>Home</span></a></li>
+                <li class="sidebar-list-item"><a href="{% static 'bazaar/Wallstreet_Portfolios.pdf' %}" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Company Info</span></a></li>
+                <li class="sidebar-list-item"><a href="../#sectionMyShares" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Your Shares</span></a></li>
+                <li class="sidebar-list-item"><a href="{%url 'bazaar:buy' %}" class="sidebar-link text-muted active"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Buy</span></a></li>
+                <li class="sidebar-list-item"><a href="{%url 'bazaar:sell' %}" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Sell</span></a></li>
+                <li class="sidebar-list-item"><a href="{%url 'bazaar:news' %}" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>News</span></a></li>
+                <li class="sidebar-list-item"><a href="{%url 'bazaar:transactions' %}" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Transactions</span></a></li>
+                <li class="sidebar-list-item"><a href="{%url 'bazaar:leaderboard' %}" class="sidebar-link text-muted"><i class="o-survey-1 mr-3 text-gray"></i><span>Leaderboard</span></a></li>
+
+                <li class="sidebar-list-item"><a href="{%url 'bazaar:logoff'%}" class="sidebar-link text-muted"><i class="o-exit-1 mr-3 text-gray"></i><span>Logout</span></a></li>
+            </ul>
+
+        </div>
+        <p style="display:none;" id="bidRange">{{ bidRange }}</p>
+
+        <div class="page-holder w-100 d-flex flex-wrap">
+            <div class="container-fluid px-xl-5">
+                <section class="py-5">
+
+                    <div class="row d-flex justify-content-center align-items-center">
+
+                        <div class="col-lg-6 mb-5">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="h6 text-uppercase mb-0" align="text-center">Buy</h3>
+
+                                </div>
+                                <div class="card-body">
+                                    <p style="color: red">* Value beside the company indicates current share price</p>
+                                    {% if message %}
+                                    <p style="color: red">{{message}}</p>
+                                    {% endif %}
+                                    <p id="validation" style="color: red;display: none">Invalid Bid</p>
+                                    <p id="cashValidation" style="color: red;display: none">You do not have enough cash to buy the shares</p>
+                                    <form action="/buy/" id="buyForm" method="post">
+                                        {%csrf_token%}
+                                        <div class="form-group">
+
+                                            <div class="select">
+                                                <label class="form-control-label text-uppercase">Company</label>
+                                                <select id="company" name="companyName" class="form-control" style="width: 100%" form="buyForm">
+                                {% for company in companies %}
+                                <option style="color: black">{{ company.name }} :   Rs.{{ company.sharePrice }}</p></option>
+                                {% endfor %}
+                              </select>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-control-label text-uppercase">Quantity</label>
+                                            <input id="quantity" type="text" placeholder="Quantity" class="form-control" name="quantity">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-control-label text-uppercase">Bid Price</label>
+                                            <input id="bidPrice" type="text" placeholder="Bid Price" class="form-control" name="price">
+                                        </div>
+                                        <div class="form-group">
+                                            <button id="submitForm" type="submit" class="btn btn-primary">Submit</button>
+
+                                        </div>
+                                    </form>
+                                    <p id="cash" style="display: none">{{profile.cash}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <footer class="footer bg-white shadow align-self-end py-3 px-xl-5 w-100">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-left text-primary">
+                            <p class="mb-2 mb-md-0">When it is a question of money, everyone is of the same religion</p>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script>
+        var preloader = document.getElementById('loading');
+
+        function start() {
+            preloader.style.display = 'none';
+        }
+    </script>
+
+
+
+    <!-- JavaScript files<script src="{% static 'bazaar/js/buy_validation.js' %}"></script>-->
+    <script src="{% static 'bazaar/vendor/jquery/jquery.min.js'%}"></script>
+    <script src="{% static 'bazaar/vendor/popper.js/umd/popper.min.js'%}">
+    </script>
+    <script src="{% static 'bazaar/vendor/bootstrap/js/bootstrap.min.js'%}"></script>
+    <script src="{% static 'bazaar/vendor/jquery.cookie/jquery.cookie.js'%}">
+    </script>
+    <script src="{% static 'bazaar/vendor/chart.js/Chart.min.js'%}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="{% static 'bazaar/js/charts-custom.js'%}"></script>
+    <script src="{% static 'bazaar/js/front.js'%}"></script>
+
+</body>
+
+</html>

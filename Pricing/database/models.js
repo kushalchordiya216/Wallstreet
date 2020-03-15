@@ -6,7 +6,8 @@ const companySchema = new mongoose.Schema({
   volumeInCirculation: { type: Number },
   volumeReserved: { type: Number },
   tier: { type: String },
-  sector: { type: String }
+  sector: { type: String },
+  portfolio: { type: String }
 });
 
 const Company = mongoose.model("company", companySchema);

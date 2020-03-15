@@ -1,0 +1,47 @@
+{
+  "1": {
+    "name": "Kushal Chordiya",
+    "email": "chordiyakushal@gmail.com",
+    "bio": "Investor",
+    "avatar": "kushal.jpg",
+    "cash": 4000000,
+    "netWorth": 400000,
+    "stocks": []
+  },
+  "2": {
+    "name": "Nikhil Gawade",
+    "email": "ngawade911@gmail.com",
+    "bio": "Trader",
+    "avatar": "nikhil.jpg",
+    "cash": 4000000,
+    "netWorth": 400000,
+    "stocks": []
+  },
+  "3": {
+    "name": "Purvesh Jain",
+    "email": "purvesh.jain@gmail.com",
+    "bio": "Professional Scammer",
+    "avatar": "purvesh.jpg",
+    "cash": 4000000,
+    "netWorth": 400000,
+    "stocks": []
+  },
+  "4": {
+    "name": "Manav Peshwani",
+    "email": "manav.peshwani@gmail.com",
+    "bio": "Shorts specialist, IRCTC Enthusiast",
+    "avatar": "bibtya.jpg",
+    "cash": 4000000,
+    "netWorth": 400000,
+    "stocks": []
+  },
+  "5": {
+    "name": "Nipun Khinvansara",
+    "email": "nipun.khinvansara@gmail.com",
+    "bio": "Take long walks when shit goes donwn",
+    "avatar": "nipun.jpg",
+    "cash": 4000000,
+    "netWorth": 400000,
+    "stocks": []
+  }
+}

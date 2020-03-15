@@ -1,0 +1,231 @@
+{%load static%}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Welcome to Wallstreet!</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="{% static 'bazaar/vendor/bootstrap/css/bootstrap.min.css'%}">
+    <!-- orion icons-->
+    <link rel="stylesheet" href="{% static 'bazaar/css/orionicons.css'%}">
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" href="{% static 'bazaar/css/style.default.css'%}" id="theme-stylesheet">
+    <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" href="{% static 'bazaar/css/custom.css'%}">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="{% static 'bazaar/img/favicon.png'%}">
+
+    <!-- Font Awesome CSS-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <!-- Google fonts - Popppins for copy-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,800">
+
+    <style type="text/css">
+        .page-holder {
+            background: url("{% static 'bazaar/img/1.png'%}");
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        
+        .card {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .text-grayp {
+            color: white;
+            font-size: 1.1rem;
+        }
+        
+        .c-container {
+            position: relative;
+            width: 200px;
+            .c-text {
+                position: absolute;
+                width: 100%;
+                text-align: center;
+                color: white;
+                font-size: 30px;
+                line-height: 30px;
+                top: 50%;
+                margin-top: -15px;
+            }
+            svg {
+                width: 100%;
+            }
+        }
+        
+        @import "compass/css3";
+        .wrapper {
+            position: relative;
+            margin: 40px auto;
+            background: white;
+        }
+        
+        @mixin timer($item,
+        $duration,
+        $size,
+        $color,
+        $border,
+        $hover: running) {
+            #{$item},
+            #{$item} * {
+                @include box-sizing(border-box);
+            }
+            #{$item} {
+                width: $size;
+                height: $size;
+            }
+            #{$item} .pie {
+                width: 50%;
+                height: 100%;
+                transform-origin: 100% 50%;
+                position: absolute;
+                background: $color;
+                border: #{$border};
+            }
+            #{$item} .spinner {
+                border-radius: 100% 0 0 100% / 50% 0 0 50%;
+                z-index: 200;
+                border-right: none;
+                animation: rota $duration + s linear infinite;
+            }
+            #{$item}:hover .spinner,
+            #{$item}:hover .filler,
+            #{$item}:hover .mask {
+                animation-play-state: $hover;
+            }
+            #{$item} .filler {
+                border-radius: 0 100% 100% 0 / 0 50% 50% 0;
+                left: 50%;
+                opacity: 0;
+                z-index: 100;
+                animation: opa $duration + s steps(1, end) infinite reverse;
+                border-left: none;
+            }
+            #{$item} .mask {
+                width: 50%;
+                height: 100%;
+                position: absolute;
+                background: inherit;
+                opacity: 1;
+                z-index: 300;
+                animation: opa $duration + s steps(1, end) infinite;
+            }
+            @keyframes rota {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+            @keyframes opa {
+                0% {
+                    opacity: 1;
+                }
+                50%,
+                100% {
+                    opacity: 0;
+                }
+            }
+        }
+        
+        @include timer('.wrapper',
+        5,
+        250px,
+        #08C,
+        '5px solid rgba(0,0,0,0.5)');
+    </style>
+</head>
+
+<body>
+    <!-- navbar-->
+    <header class="header">
+        <nav class="navbar navbar-expand-lg px-4 py-2 bg-white shadow"><a href="#" class="sidebar-toggler text-gray-500 mr-4 mr-lg-5 lead"><i class="fas fa-align-left"></i></a><a href="#" class="navbar-brand font-weight-bold text-uppercase text-base">Wallstreet</a>
+            <ul class="ml-auto d-flex align-items-center list-unstyled mb-0">
+
+                <li class="nav-item dropdown mr-3"><a id="notifications" href="http://example.com" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle text-gray-400 px-1"><i class="fa fa-bell"></i><span class="notification-icon"></span></a>
+                    <div aria-labelledby="notifications" class="dropdown-menu">
+                        <a href="{% url 'bazaar:news' %}" class="dropdown-item text-center"><small class="font-weight-bold headings-font-family text-uppercase">View News</small></a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown ml-auto">
+                    <a id="userInfo" href="http://example.com" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle"><img src="{% static 'bazaar/img/navLogo.png' %}" alt="Jason Doe" style="max-width: 1.5rem;" class="img-fluid rounded-circle shadow"></a>
+                    <div aria-labelledby="userInfo" class="dropdown-menu"><a href="#" class="dropdown-item"><strong class="d-block text-uppercase headings-font-family">{{ profile.user.username }}</strong><small>Cash: {{ profile.cash }}</small><br/><small>Net Worth: {{ profile.netWorth }}</small><br/><small>Rank: {{ profile.rank }}</small></a>
+                        <div class="dropdown-divider"></div><a href="../#sectionMyShares" class="dropdown-item">Your Shares</a>
+                        <div class="dropdown-divider"></div><a href="{% url 'bazaar:transactions' %}" class="dropdown-item">Transaction History</a>
+                        <div class="dropdown-divider"></div><a href="{%url 'bazaar:logoff'%}" class="dropdown-item">Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <div class="d-flex align-items-stretch">
+        <div id="sidebar" class="sidebar py-3">
+            <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">MAIN</div>
+            <ul class="sidebar-menu list-unstyled" style="margin-left:-15px;">
+                <li class="sidebar-list-item"><a href="{%url 'bazaar:index' %}" class="sidebar-link text-muted"><i class="o-home-1 mr-3 text-gray"></i><span>Home</span></a></li>
+                <li class="sidebar-list-item"><a href="{% static 'bazaar/Wallstreet_Portfolios.pdf' %}" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Company Info</span></a></li>
+                <li class="sidebar-list-item"><a href="../#sectionMyShares" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Your Shares</span></a></li>
+                <li class="sidebar-list-item"><a href="{%url 'bazaar:buy' %}" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Buy</span></a></li>
+                <li class="sidebar-list-item"><a href="{%url 'bazaar:sell' %}" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Sell</span></a></li>
+                <li class="sidebar-list-item"><a href="{%url 'bazaar:news' %}" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>News</span></a></li>
+                <li class="sidebar-list-item"><a href="{%url 'bazaar:transactions' %}" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Transactions</span></a></li>
+                <li class="sidebar-list-item"><a href="{%url 'bazaar:leaderboard' %}" class="sidebar-link text-muted"><i class="o-survey-1 mr-3 text-gray"></i><span>Leaderboard</span></a></li>
+
+                <li class="sidebar-list-item"><a href="{%url 'bazaar:logoff'%}" class="sidebar-link text-muted"><i class="o-exit-1 mr-3 text-gray"></i><span>Logout</span></a></li>
+            </ul>
+
+        </div>
+        <div class="page-holder w-100 d-flex flex-wrap">
+
+            <div class="container-fluid px-xl-5">
+
+                <section class="py-5">
+                    <div class="row mb-4 d-flex align-items-center">
+                        <div class="col-lg-12 mb-4 mb-lg-0">
+                            <div class="card">
+                                <div class="card-header" style="border-bottom-radius:5px;">
+                                    <h2 class="h6 text-uppercase mb-0">The Market is currently closed!</h2>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+            <footer class="footer bg-white shadow align-self-end py-3 px-xl-5 w-100">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-left text-primary">
+                            <p class="mb-2 mb-md-0">When it is a question of money, everyone is of the same religion</p>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+
+    <!-- JavaScript files-->
+    <script src="{% static 'bazaar/vendor/jquery/jquery.min.js'%}"></script>
+    <script src="{% static 'bazaar/vendor/popper.js/umd/popper.min.js'%}">
+    </script>
+    <script src="{% static 'bazaar/vendor/bootstrap/js/bootstrap.min.js'%}"></script>
+    <script src="{% static 'bazaar/vendor/jquery.cookie/jquery.cookie.js'%}">
+    </script>
+    <script src="{% static 'bazaar/vendor/chart.js/Chart.min.js'%}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="{% static 'bazaar/js/charts-home.js'%}"></script>
+    <script src="{% static 'bazaar/js/front.js'%}"></script>
+</body>
+
+</html>

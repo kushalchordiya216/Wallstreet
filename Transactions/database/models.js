@@ -19,8 +19,6 @@ bidSchema.index({ price: 1, company: 1 });
 
 const Buy = mongoose.model("buytable", bidSchema);
 const Sell = mongoose.model("selltable", bidSchema);
-const Call = mongoose.model("calltable", bidSchema);
-const Put = mongoose.model("puttable", bidSchema);
 
 /**
  * Schema for completed transactions

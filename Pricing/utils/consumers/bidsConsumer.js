@@ -1,5 +1,5 @@
 const { consumer } = require("../kafka");
-const { Company } = require("../database/models");
+const { Company } = require("../../database/models");
 
 /**
  * bid is a bid made by users. It is an object with following keys
@@ -43,14 +43,14 @@ consumer.on("message", async function(message) {
  * buybid/CMP ratio high => more demand => higher rise in price
  * CMP/sellbid ratio high => more supply => larger drop in price
  *
- * @param {Object} buyarr key is company name, value is total inflow of money
- * @param {Object} sellarr  key is company name, value is total outflow of money
+ * @param {Object} buyarr Object where key is company name, value is total inflow of money
+ * @param {Object} sellarr  Object where key is company name, value is total outflow of money
  *
- * @return {Array} containing two objects
+ * @return {Array} Array containing two objects
  * cashflow object which contains calculated cashflow rates, as key value pair (i.e. company:cashflow)
  * currentPrices object, which contains current market price as key value pairs
  */
-async function accumulateBids() {
+let accumulateBids = async () => {
   let query = await Company.find({}, "company price");
   let currentPrices = {};
   query.forEach(res => {
@@ -64,8 +64,9 @@ async function accumulateBids() {
   }
   buyBids = {};
   sellBids = {};
-  return [cashflow, currentPrices];
-}
+  return new Array(cashflow, currentPrices);
+};
+//returns promise
 
 module.exports = {
   bids: accumulateBids

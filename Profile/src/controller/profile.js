@@ -35,26 +35,23 @@ profileRouter.post("/profile", async (req, res) => {
   }
 });
 
-profileRouter.get("/leaderboard",async(req,res)=>{
-
-  try{
-    const allProfiles = await Profile.find({},'user stockWorth').sort({stockWorth:-1})
-    if(allProfiles)
-    {
-    res.send(allProfiles)
+profileRouter.get("/leaderboard", async (req, res) => {
+  try {
+    const allProfiles = await Profile.find({}, "user netWorth")
+      .sort({
+        stockWorth: -1
+      })
+      .limit(10);
+    if (allProfiles) {
+      res.send(allProfiles);
+    } else {
+      res.send("No Profiles Found").status(404);
     }
-    else
-    {
-    res.send("No Profiles Found").status(404)
-    }
+  } catch (error) {
+    console.log(error);
+    res.send().status(404);
   }
-  catch(error)
-  {
-    console.log(error)
-    res.send().status(404)
-  }
-
-})
+});
 
 // TODO: populate kafka for testing
 

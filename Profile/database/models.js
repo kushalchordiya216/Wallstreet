@@ -20,7 +20,7 @@ const profileSchema = new mongoose.Schema({
     type: Number,
     default: 4000000
   },
-  stockWorth: {type:Number, default:0},
+  netWorth: { type: Number, default: 4000000 },
   stocks: [
     {
       company: {
@@ -35,25 +35,30 @@ const profileSchema = new mongoose.Schema({
     }
   ]
 });
+profileSchema.index({ netWorth: -1 });
 
-//TODO: optimize with worker threads
-//TODO: Use MongoDB bulwrites instead of updateOne
-profileSchema.statics.updateStockWorth = function() {
+profileSchema.statics.updateNetWorth = function() {
   const profiles = this.find();
-  let updatedStockWorth = {};
-  let total = 0;
+  let updateQueries = [];
   for (profile in profiles) {
-    let stockWorth = profile.stocks.reduce((total, stock) => {
-      return (total += stock.volume * stock.price);
-    }, 0);
-    updatedStockWorth[profile._id] = stockWorth;
+    if (profile.isModified("stocks") || profile.isModified("cash")) {
+      let stockWorth = profile.stocks.reduce((total, stock) => {
+        return (total += stock.volume * stock.price);
+      }, 0);
+      let updateQuery = {
+        updateOne: {
+          filter: {
+            _id: profile._id
+          },
+          update: {
+            netWorth: stockWorth + profile.cash
+          }
+        }
+      };
+      updateQueries.push(updateQuery);
+    }
   }
-  for (_id in updatedStockWorth) {
-    this.updateOne(
-      { _id: _id },
-      { $set: { stockWorth: updatedStockWorth[_id] } }
-    );
-  }
+  this.bulkWrite(updateQueries);
 };
 
 profileSchema.methods.updateProfile = async function() {

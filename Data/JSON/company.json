@@ -1,0 +1,86 @@
+{
+  "State Bank Of India": {
+    "price": 242,
+    "volumeInCirculation": 0,
+    "volumeReserved": 216000,
+    "tier": "bluechip",
+    "sector": "Banking"
+  },
+  "HDFC Bank": {
+    "price": 2066,
+    "volumeInCirculation": 0,
+    "volumeReserved": 586000,
+    "tier": "bluechip",
+    "sector": "Banking"
+  },
+  "Bharat Petroleum": {
+    "price": 376,
+    "volumeInCirculation": 0,
+    "volumeReserved": 82000,
+    "tier": "bluechip",
+    "sector": "Petroleum"
+  },
+  "Reliance": {
+    "price": 1105,
+    "volumeInCirculation": 0,
+    "volumeReserved": 700000,
+    "tier": "bluechip",
+    "sector": "Petroleum"
+  },
+  "Cipla": {
+    "price": 425,
+    "volumeInCirculation": 0,
+    "volumeReserved": 34000,
+    "tier": "bluechip",
+    "sector": "Pharmaceuticals"
+  },
+  "Sun Pharma": {
+    "price": 384,
+    "volumeInCirculation": 0,
+    "volumeReserved": 92000,
+    "tier": "bluechip",
+    "sector": "Pharmaceuticals"
+  },
+  "InfoSys": {
+    "price": 642,
+    "volumeInCirculation": 0,
+    "volumeReserved": 270000,
+    "tier": "bluechip",
+    "sector": "IT Services"
+  },
+  "TCS": {
+    "price": 1806,
+    "volumeInCirculation": 0,
+    "volumeReserved": 677000,
+    "tier": "bluechip",
+    "sector": "IT Services"
+  },
+  "Asian Paints": {
+    "price": 1797,
+    "volumeInCirculation": 0,
+    "volumeReserved": 173000,
+    "tier": "bluechip",
+    "sector": "FMCG"
+  },
+  "Marico": {
+    "price": 260,
+    "volumeInCirculation": 0,
+    "volumeReserved": 34000,
+    "tier": "bluechip",
+    "sector": "FMCG"
+  },
+  "Bharti Airtel": {
+    "price": 491,
+    "volumeInCirculation": 0,
+    "volumeReserved": 270000,
+    "tier": "bluechip",
+    "sector": "TeleCommunication"
+  },
+  "Vodafone Idea": {
+    "price": 6,
+    "volumeInCirculation": 0,
+    "volumeReserved": 200000,
+    "tier": "bluechip",
+    "sector": "TeleCommunication"
+  }
+}

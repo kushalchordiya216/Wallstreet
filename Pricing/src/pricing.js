@@ -19,9 +19,9 @@ async function updatePrices(finalPrices) {
   await Company.bulkWrite(queries);
 }
 
-async function main() {
+async function pricing() {
   let newRates = transactions();
-  let [cashflow, currentPrices] = bids();
+  let [cashflow, currentPrices] = await bids();
   let finalPrices = {};
   for (company in currentPrices) {
     if (company in newRates) {
@@ -38,4 +38,4 @@ async function main() {
   publish("Prices", finalPrices);
 }
 
-module.exports = { main: main };
+module.exports = { pricing: pricing };
