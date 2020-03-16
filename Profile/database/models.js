@@ -128,4 +128,4 @@ bidSchema.pre("findOneAndUpdate", async function() {
 
 const Bid = mongoose.model("Bids", bidSchema);
 
-module.exports = { Bid: Bid, Profile: Profile };
+module.exports = { Profile: Profile,Bid: Bid };

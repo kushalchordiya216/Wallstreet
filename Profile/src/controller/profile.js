@@ -1,5 +1,7 @@
 const express = require("express");
 require("../../database/connector");
+const mongoose = require("mongoose")
+const objectid = mongoose.Types.ObjectId
 const { Profile, Bid } = require("../../database/models");
 
 const profileRouter = express.Router();
@@ -14,7 +16,13 @@ profileRouter.get("/history", async (req, res) => {
 
 profileRouter.get("/profile", async (req, res) => {
   // display user profile, by fetching it from profile db
-  const profile = await Profile.findOne();
+  const name = req.body.name
+  console.log(name)
+  //TODO: Below query was not working for me fix it
+  //Profile.findOne({name:name});
+
+  const profile = await Profile.findOne({name:"nikhil"});
+  console.log(profile)
   if (profile) {
     res.send(profile);
   } else {
