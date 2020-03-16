@@ -80,46 +80,56 @@ try{
             tempBid[i] = tempBid[j];
             tempBid[j] = temp;
         }
-       // console.log(tempBid)
-       
+         
     /*
 
     **Processing each bid one by one** 
+    **IF volume of ipo goes down to zero then all successive bids cash is returned and published**
 
     */ 
         for(const element in tempBid)
         {
            // console.log(element.userName)
-            
-            if(Number(ipoDetail.volume)>0)
-            {
-               
-                
-                let newVol=0
+
+           const options1 = {
+            uri: `http://localhost:3002/profile`,
+            method: "GET",
+            body: {
+              name: JSON.stringify(tempBid[element].userName)
+            },
+            json: true
+          };
+        
+          const profile  = await request(options1);
+                 
+                let newVol=0  //new Lot size for partial Bids
+                // Bid for appropriate volume
                 if(ipoDetail.volume>=lot)
                 {
                 ipoDetail.volume-=lot
                 ipoDetail.volumeInCirculation+=lot
                 }
-                else
+
+                // Bid for less volume than lot but greater than zero partial bid
+                else if(ipoDetail.volume>=0)
                 {
                     ipoDetail.volumeInCirculation+=ipoDetail.volume
                     newVol= ipoDetail.volume
                     ipoDetail.volume=0 
                         
                 }
-                const options1 = {
-                    uri: `http://localhost:3002/profile`,
-                    method: "GET",
-                    body: {
-                      name: JSON.stringify(tempBid[element].userName)
-                    },
-                    json: true
-                  };
-                
-                  const profile  = await request(options1);
-                 
 
+                //Bid Not possible
+                //Returns the cash and goes to next bid for cancelling those as well
+
+                else
+                {
+                    profile.cash+=ipoDetail.price*lot
+                    publish(profile)
+                    continue
+                    
+                }
+               
                   /*
 
                   **Reassigning Stocks of the Person**
@@ -143,9 +153,11 @@ try{
                            if(newVol==0)
                            {
                           stock.volume+=lot
+                          profile.cash-=lot*ipoDetail.price
                            }
                            else
                            {
+                            profile.cash-=newVol*ipoDetail.price
                             stock.volume+=newVol
                            }
                           flag=1
@@ -174,21 +186,11 @@ try{
                   }
                   profile.stocks=assignStock
 
+                
                   console.log(profile)
                   await ipoDetail.save()
                   await publish(profile)     
-            }
-
-            /*
-
-            **As Volume is Finished IPO processing is stopped**
-
-            */
-
-            else 
-            {
-                break
-            }
+        
         }
    
     }
@@ -243,14 +245,27 @@ catch(e)
 //Dont allow user to bid for more than available for sale
 router.post('/ipo/buy',async (req,res)=>{
 
-    try {    
+    try {   
+        let lot=10
+        const options1 = {
+            uri: `http://localhost:3002/profile`,
+            method: "GET",
+            body: {
+              name: JSON.stringify(tempBid[element].userName)
+            },
+            json: true
+          };
+        
+        const profile  = await request(options1);
 
         const ipoDetail = await ipoBid.find({name:req.body.name})
-        if(ipoDetail)
+        if(ipoDetail && profile.cash>=lot*ipoDetail.price)
         {       
         const userBid = new ipoUserBid({name:req.body.companyName,userName:req.body.name})
         await userBid.save()
         console.log(userBid)
+        profile.cash-=lot*ipoDetail.price
+        publish(profile)
         res.send("Bid Acknowledged").status(200)
         }
         else

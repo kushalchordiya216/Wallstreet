@@ -25,6 +25,8 @@ const ipoUserBidSchema = mongoose.Schema({
 
 
 
+
+
 const ipo = mongoose.model('ipo',ipoSchema)
 const ipoBid = mongoose.model('ipoBid',ipoBidSchema)
 const ipoUserBid = mongoose.model('ipoUserBid',ipoUserBidSchema)
