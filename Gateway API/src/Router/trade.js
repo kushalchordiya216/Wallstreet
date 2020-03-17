@@ -29,7 +29,7 @@ tradeRouter.get("/trade/:company", auth, async (req, res) => {
       }
     });
   } catch (e) {
-    res.send("Something went wrong").status(404);
+    res.status(400).send("Something went wrong");
   }
 });
 
@@ -38,7 +38,7 @@ tradeRouter.post("/trade/:company", auth, async (req, res) => {
   req.body.company = req.params.company;
   req.body.user = req._id;
   const options = {
-    uri: `http://localhost:${process.env.PROFILE_PORT}/placeBids/`,
+    uri: `http://localhost:${process.env.PROFILE_PORT}/placeBids`,
     method: "POST",
     json: true,
     body: req.body
@@ -47,10 +47,8 @@ tradeRouter.post("/trade/:company", auth, async (req, res) => {
     request(options, function(err, response, body) {
       if (err) {
         res.status(400).send("Problem submitting your bid");
-      } else if (response.statusCode == 406) {
-        res.status(406).send(body);
       } else {
-        res.status(202).send(body);
+        res.status(response.statusCode).send(body);
       }
     });
   } catch (e) {

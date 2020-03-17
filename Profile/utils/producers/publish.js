@@ -1,8 +1,10 @@
 const kafka = require("kafka-node");
-const { producer } = require("../kafka");
 
 const publish = (topic, msg) => {
   return new Promise((resolve, reject) => {
+    const client = new kafka.KafkaClient(`localhost:9092`);
+    const producer = new kafka.Producer(client);
+
     payloads = [
       {
         topic: topic,
@@ -17,7 +19,7 @@ const publish = (topic, msg) => {
           console.log(err);
           return reject("Failed Publish");
         } else {
-          console.log(msg);
+          // console.log(msg);
           return resolve("Publish Success");
         }
       });

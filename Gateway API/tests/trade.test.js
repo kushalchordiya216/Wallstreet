@@ -43,6 +43,9 @@ test("Positive Buy Test", async () => {
       price: 250,
       action: "buy"
     })
+    .expect(res => {
+      console.log(res.text);
+    })
     .expect(202);
 });
 

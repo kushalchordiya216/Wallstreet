@@ -43,7 +43,12 @@ tradeRouter.post("/placeBids", async (req, res) => {
         return;
       }
       await bid.save();
-      await publish("Bids", bid);
+      try {
+        await publish("Bids", bid);
+      } catch (e) {
+        res.status(406).send("Kafka says fuck you");
+        return;
+      }
 
       res.status(202).send("Buy bid placed");
       return;
