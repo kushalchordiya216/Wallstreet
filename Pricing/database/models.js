@@ -10,8 +10,9 @@ const companySchema = new mongoose.Schema({
   portfolio: { type: String }
 });
 
-const Company = mongoose.model("company", companySchema);
+const Company = mongoose.model("companies", companySchema);
 
 module.exports = {
-  Company: Company
+  Company: Company,
+  companySchema: companySchema
 };

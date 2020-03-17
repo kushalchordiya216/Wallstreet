@@ -5,7 +5,7 @@
     "bio": "Investor",
     "avatar": "kushal.jpg",
     "cash": 4000000,
-    "netWorth": 400000,
+    "netWorth": 4000000,
     "stocks": []
   },
   "2": {
@@ -14,7 +14,7 @@
     "bio": "Trader",
     "avatar": "nikhil.jpg",
     "cash": 4000000,
-    "netWorth": 400000,
+    "netWorth": 4000000,
     "stocks": []
   },
   "3": {
@@ -23,7 +23,7 @@
     "bio": "Professional Scammer",
     "avatar": "purvesh.jpg",
     "cash": 4000000,
-    "netWorth": 400000,
+    "netWorth": 4000000,
     "stocks": []
   },
   "4": {
@@ -32,7 +32,7 @@
     "bio": "Shorts specialist, IRCTC Enthusiast",
     "avatar": "bibtya.jpg",
     "cash": 4000000,
-    "netWorth": 400000,
+    "netWorth": 4000000,
     "stocks": []
   },
   "5": {
@@ -41,7 +41,7 @@
     "bio": "Take long walks when shit goes donwn",
     "avatar": "nipun.jpg",
     "cash": 4000000,
-    "netWorth": 400000,
+    "netWorth": 4000000,
     "stocks": []
   }
 }

@@ -1,0 +1,26 @@
+{
+  "SBIbuy1000250": {
+    "company": "SBI",
+    "volume": 1000,
+    "price": 250,
+    "action": "buy"
+  },
+  "HDFCbuy19502100": {
+    "company": "HDFC",
+    "volume": 1950,
+    "price": 2100,
+    "action": "buy"
+  },
+  "Reliancesell2001100": {
+    "company": "Reliance",
+    "volume": 200,
+    "price": 1100,
+    "action": "sell"
+  },
+  "TCSsell4501750": {
+    "company": "TCS",
+    "volume": 450,
+    "price": 1750,
+    "action": "sell"
+  }
+}

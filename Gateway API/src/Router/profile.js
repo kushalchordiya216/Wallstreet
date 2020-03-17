@@ -2,7 +2,6 @@ const express = require("express");
 const request = require("request");
 const { auth, known_tokens } = require("../../middleware/auth");
 const { User } = require("../../database/models");
-require("../../database/connector");
 
 const profileRouter = express.Router();
 
@@ -10,14 +9,15 @@ profileRouter.get("/profile", auth, (req, res) => {
   const options = {
     url: `http://localhost:${process.env.PROFILE_PORT}/profile`,
     method: "GET",
-    _id: req._id
+    json: true,
+    body: { _id: req._id }
   };
   res.setHeader("Content-Type", "application/json");
   request(options, function(err, response, body) {
     if (err) {
       res.status(400).send(err);
     }
-    res.send(body);
+    res.status(200).send(body);
   });
 });
 
@@ -43,8 +43,7 @@ profileRouter.get("/logout", auth, async (req, res) => {
       { $pull: { tokens: { token: req.token } } }
     );
     delete known_tokens[req.token];
-    res.clearCookie("Authorization");
-    res.redirect("/login");
+    res.status(302).redirect("/login");
   } catch (error) {
     console.log(error);
     res.status(400).send("Something went wrong");

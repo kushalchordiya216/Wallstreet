@@ -1,26 +1,26 @@
 {
-  "State Bank Of India": {
+  "SBI": {
     "price": 242,
     "volumeInCirculation": 0,
     "volumeReserved": 216000,
     "tier": "bluechip",
     "sector": "Banking"
   },
-  "HDFC Bank": {
+  "HDFC": {
     "price": 2066,
     "volumeInCirculation": 0,
     "volumeReserved": 586000,
     "tier": "bluechip",
     "sector": "Banking"
   },
-  "Bharat Petroleum": {
+  "BPCL": {
     "price": 376,
     "volumeInCirculation": 0,
     "volumeReserved": 82000,
     "tier": "bluechip",
     "sector": "Petroleum"
   },
-  "Reliance": {
+  "RIL": {
     "price": 1105,
     "volumeInCirculation": 0,
     "volumeReserved": 700000,
@@ -34,7 +34,7 @@
     "tier": "bluechip",
     "sector": "Pharmaceuticals"
   },
-  "Sun Pharma": {
+  "SunPharma": {
     "price": 384,
     "volumeInCirculation": 0,
     "volumeReserved": 92000,
@@ -55,7 +55,7 @@
     "tier": "bluechip",
     "sector": "IT Services"
   },
-  "Asian Paints": {
+  "AsianPaints": {
     "price": 1797,
     "volumeInCirculation": 0,
     "volumeReserved": 173000,
@@ -69,14 +69,14 @@
     "tier": "bluechip",
     "sector": "FMCG"
   },
-  "Bharti Airtel": {
+  "BhartiAirtel": {
     "price": 491,
     "volumeInCirculation": 0,
     "volumeReserved": 270000,
     "tier": "bluechip",
     "sector": "TeleCommunication"
   },
-  "Vodafone Idea": {
+  "VodafoneIdea": {
     "price": 6,
     "volumeInCirculation": 0,
     "volumeReserved": 200000,

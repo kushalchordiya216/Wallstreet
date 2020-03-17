@@ -23,5 +23,5 @@ server.use(profileRouter);
 //server.use(tradeRouter);
 
 server.listen(PORT, () => {
-  console.log(`Profile srver listening on port ${PORT} ....`);
+  console.log(`Profile server listening on port ${PORT} ....`);
 });

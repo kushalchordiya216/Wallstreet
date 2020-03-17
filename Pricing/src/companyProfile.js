@@ -10,7 +10,6 @@ router.get("/profile", async (req, res) => {
   // send the profile of the requested company
   const name = req.body.name;
   const company = await Company.findOne({ name: name });
-  console.log(company);
   res.send(company);
 });
 

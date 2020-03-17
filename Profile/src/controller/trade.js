@@ -1,85 +1,79 @@
 const express = require("express");
 const request = require("request-promise");
-const { Bid } = require("../../database/models");
+const { Bid, Profile } = require("../../database/models");
 const tradeRouter = express.Router();
 const { publish } = require("../../utils/producers/publish");
 
 tradeRouter.use(express.json());
 
-tradeRouter.post("/trade/placeBids", async (req, res) => {
-  //Company name can also be put as query string if required
-  // To know about the different kinds of bids that can be made, see User/database/models.js/bidSchema
-
+tradeRouter.post("/placeBids", async (req, res) => {
   const bid = new Bid(req.body);
-  bid.populate("user");
-
+  let profile = await Profile.findById(bid.user);
   try {
-    const availableCash = bid.user.cash;
-    const userStocks = bid.user.stocks;
+    const availableCash = profile.cash;
+    const userStocks = profile.stocks;
+
+    const options1 = {
+      uri: `http://localhost:${process.env.PRICING_PORT}/profile`,
+      method: "GET",
+      body: {
+        name: bid.company
+      },
+      json: true
+    };
+
+    const company1 = await request(options1);
+    let stockPrice = 0;
+    if (company1) {
+      stockPrice = company1.price;
+    } else {
+      res.status(406).send("Company Not Present");
+      return;
+    }
+
+    if (stockPrice * 1.2 < bid.price || stockPrice * 0.8 > bid.price) {
+      res.status(406).send("Bid not Allowed, exceeds circuit limit!");
+      return;
+    }
 
     /**************************************** Buy bid logic ***************************************************/
     if (bid.action === "buy") {
-      //Checks if total cost + brokerage fees is available or not
-      if (availableCash < bid.price * volume * 1.05) {
-        res.send("Enough cash is not available").status(200);
+      if (availableCash < bid.price * bid.volume * 1.05) {
+        res.status(406).send("Enough cash is not available");
+        return;
       }
+      await bid.save();
+      await publish("Bids", bid);
 
-      // fetch company profile to see if current market price is within acceptable range of bid.price
-
-      // FIXME: pass value of stocks in request itself
-
-      const options1 = {
-        uri: `http://localhost:${process.env.PROFILE_PORT}/profile`,
-        method: "GET",
-        body: {
-          _id: JSON.stringify({ _id }),
-          name: companyName
-        },
-        json: true
-      };
-
-      const company1 = await request(options1);
-      let stockPrice;
-      if (company1) {
-        stockPrice = company1.price; //company1.stockPrice;
-      } else {
-        res.send("Company Not Present").status(200);
-      }
-
-      if (stockPrice / bid.price > 1.2 || stockPrice / bid.price < 0.8) {
-        res.send("Bid not Allowed, exceeds circuit limit!").status(200);
-      } else {
-        //Save bid to DB and publish to kafka
-        await bid.save();
-        publish("Bid", bid);
-        res.send("Buy bid placed").status(200);
-      }
+      res.status(202).send("Buy bid placed");
+      return;
     } else {
       /********************************************* Sell bid logic *************************************************/
       let companyStock = userStocks.filter(stock => {
-        return stock[company] === bid.company;
+        return stock.company === bid.company;
       });
-      // will return array
       companyStock = companyStock[0];
 
-      // check if user owns enough shares that they are trying to sell
       if (companyStock) {
         if (companyStock.volume < bid.volume) {
-          res.send("Bid is invalid insufficient stocks found").status(200);
+          res.status(406).send("Bid is invalid insufficient stocks found");
+          return;
         } else {
           await bid.save();
           await publish("Bids", bid);
-          res.send("Sell bid placed").status(200);
+          res.status(202).send("Sell bid placed");
+          return;
         }
       } else {
         res
-          .send("No Stock of specified company Present in portfolio")
-          .status(200);
+          .status(406)
+          .send("No Stock of specified company Present in portfolio");
+        return;
       }
     }
   } catch (e) {
-    res.send("Bid placing failed").status(404);
-    console.log(e);
+    res.status(406).send("Bid placing failed");
+    return;
   }
 });
 

@@ -2,13 +2,12 @@ const express = require("express");
 const request = require("request");
 const { auth } = require("../../middleware/auth");
 const { User } = require("../../database/models");
-require("../../database/connector");
 
 const loginRouter = express.Router();
 
 /***************************************** LOGIN PATHS *****************************************/
 loginRouter.get("/login", (_req, res) => {
-  res.send("Login page");
+  res.send("<h1>Login page<h1>");
 });
 
 loginRouter.post("/login", async (req, res) => {
@@ -17,26 +16,23 @@ loginRouter.post("/login", async (req, res) => {
       req.body.email,
       req.body.password
     );
-    console.log(user);
 
     const token = await user.generateAuthToken();
-    res.cookie("Authorization", token);
-    res.redirect("/profile");
+    res.cookie("Authorization", token, { httpOnly: true, maxAge: 86400000 });
+    res.status(302).redirect("/profile");
   } catch (error) {
-    console.log(error);
-    res.send("Invalid Credentials!");
+    res.status(400).send("Invalid Credentials!");
   }
 });
 
 /***************************************** REGISTER PATHS *****************************************/
 loginRouter.get("/register", (req, res) => {
-  res.send("Registration page");
+  res.status(200).send("<h1>Registration page<h1>");
 });
 
 loginRouter.post("/register", async (req, res) => {
   try {
     const user = new User(req.body);
-    await user.save();
     const token = await user.generateAuthToken();
 
     const options = {
@@ -51,18 +47,29 @@ loginRouter.post("/register", async (req, res) => {
         await user.remove();
         res.status(400).send("Problem creating your profile" + err);
       } else {
-        res.cookie("Authorization", token);
-        res.send(body);
+        res.cookie("Authorization", token, {
+          httpOnly: true,
+          maxAge: 86400000
+        });
+        res.status(201).send(body);
       }
     });
   } catch (error) {
-    console.log(error);
-    res.status(400).send(error);
+    let responseData = error;
+    if ("errmsg" in error) {
+      responseData = error.errmsg;
+    } else if ("errors" in error) {
+      responseData = "";
+      for (key in error.errors) {
+        responseData += error.errors[key].reason + "\n";
+      }
+    }
+    res.status(400).send(responseData);
   }
 });
 
 loginRouter.get("/updatePassword", auth, (_req, res) => {
-  res.send("password update page");
+  res.status(200).send("password update page");
 });
 
 loginRouter.post("/updatePassword", auth, async (req, res) => {
@@ -70,8 +77,9 @@ loginRouter.post("/updatePassword", auth, async (req, res) => {
     let user = await User.findById(req._id);
     user.password = req.body.password;
     await user.save();
-    res.send("password successfully updated!\n");
+    res.status(302).redirect("/profile");
   } catch (error) {
+    console.log(error);
     res.status(400).send(error);
   }
 });

@@ -88,4 +88,4 @@ Deprecated/*
 .vscode/launch.json
 .vscode/tasks.json
 Backdoor/
-scratcpad/mongopopulation
+kafka-playground/*

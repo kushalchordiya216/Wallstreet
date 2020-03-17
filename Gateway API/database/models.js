@@ -61,13 +61,14 @@ userSchema.methods.generateAuthToken = async function() {
   const token = jwt.sign({ _id: user._id.toString() }, "secretkey", {
     expiresIn: "1d"
   });
+
   user.tokens = user.tokens.concat({ token: token });
   await user.save();
   return token;
 };
 
 userSchema.statics.findByCredentials = async function(email, password) {
-  const user = await User.findOne({ email: email });
+  const user = await this.findOne({ email: email });
   if (!user) {
     return new Error("Invalid Credentials");
   }

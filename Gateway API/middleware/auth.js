@@ -2,19 +2,16 @@ const jwt = require("jsonwebtoken");
 const { User } = require("../database/models");
 
 const known_tokens = {};
-
 const auth = async (req, res, next) => {
   try {
     const token = req.cookies.Authorization;
     if (token) {
       const decodedToken = jwt.verify(token, "secretkey");
       if (decodedToken in known_tokens) {
-        req._id = decodedToken;
+        req._id = decodedToken._id;
         req.token = token;
       } else {
-        console.log("Fetching token from db");
         const user = await User.findOne({
-          // eslint-disable-next-line quotes
           _id: decodedToken._id,
           "tokens.token": token
         });
@@ -22,7 +19,7 @@ const auth = async (req, res, next) => {
           throw new Error("Unauthorized Access!\n");
         }
         known_tokens[decodedToken] = token;
-        req._id = decodedToken;
+        req._id = decodedToken._id;
         req.token = token;
       }
       next();
@@ -31,7 +28,6 @@ const auth = async (req, res, next) => {
     }
   } catch (e) {
     res.clearCookie("Authorization");
-    console.log(e);
     res.status(302).redirect("/login");
   }
 };

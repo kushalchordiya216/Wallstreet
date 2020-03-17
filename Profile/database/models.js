@@ -92,7 +92,7 @@ const bidSchema = new mongoose.Schema(
     company: { type: String },
     volume: { type: Number },
     price: { type: Number },
-    category: { type: String },
+    category: { type: String, default: "stocks" },
     action: { type: String },
     status: { type: String, default: "Pending" }
   },
@@ -100,11 +100,11 @@ const bidSchema = new mongoose.Schema(
 );
 
 bidSchema.pre("save", async function() {
-  if (this.action === "Buy") {
+  if (this.action === "buy") {
     await Profile.where({ _id: this.user._id })
       .update({ $inc: { cash: -(this.price * this.volume) * 1.05 } })
       .exec();
-  } else if (this.action === "Sell") {
+  } else if (this.action === "sell") {
     await Profile.where({
       _id: this.user._id,
       "stocks.company": this.company
@@ -115,11 +115,11 @@ bidSchema.pre("save", async function() {
 });
 
 bidSchema.pre("findOneAndUpdate", async function() {
-  if (this.action === "Buy") {
+  if (this.action === "buy") {
     await Profile.where({ _id: this.user._id })
       .update({ $inc: { cash: this.price * this.volume } })
       .exec();
-  } else if (this.action === "Sell") {
+  } else if (this.action === "sell") {
     await Profile.where({ _id: this.user._id, "stocks.company": this.company })
       .update({ $inc: { "stocks.$.volume": -this.volume } })
       .exec();
@@ -128,4 +128,9 @@ bidSchema.pre("findOneAndUpdate", async function() {
 
 const Bid = mongoose.model("Bids", bidSchema);
 
-module.exports = { Profile: Profile,Bid: Bid };
+module.exports = {
+  Bid: Bid,
+  Profile: Profile,
+  bidSchema: bidSchema,
+  profileSchema: profileSchema
+};
